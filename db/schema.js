@@ -49,8 +49,14 @@ const Blog = new mongoose.Schema({
 
 // comment schema for blogs "user" field is who writes the comment and have a relation with users 
 const Comment = new mongoose.Schema({
-    user: User,
-    blog: Blog,
+    user: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "User"
+    },
+    blog: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "Blog"
+    },
     body:{
         type: String,
         required: true
