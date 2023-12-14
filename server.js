@@ -16,10 +16,17 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 
 
+// serving static files
+const path = require("path")
+app.use(express.static(path.join(__dirname , "public")))
+
+
 // add database functionalities to app
 require("./db")
 
 
+// adding route files to main file
+app.use("/auth" , require("./routes/auth"))
 
 app.listen(port ,() => {
     console.log(`Server Is Listening On Port ${port}`)
