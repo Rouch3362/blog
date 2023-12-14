@@ -20,11 +20,13 @@ app.use(bodyParser.json())
 
 
 // session and cookie settings
+const connectMongo = require("connect-mongo")
 const session = require("express-session")
 app.use(session({
     secret: 'amirali3362',
     resave: false,
     saveUninitialized: false,
+    store: connectMongo.create({mongoUrl: process.env.MONGO_URI})
 }));
 
 // for messaging
