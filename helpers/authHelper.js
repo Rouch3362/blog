@@ -8,6 +8,11 @@ const HashPassword = (plain) => {
     return hash
 }
 
+
+const ValidatePassword = (plainPassword , hashedPassword) => {
+    return bcrypt.compareSync(plainPassword , hashedPassword)
+}
+
 const ValidateEmail = (email) => {
     const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
     return regex.test(String(email))
@@ -16,5 +21,6 @@ const ValidateEmail = (email) => {
 
 module.exports = {
     HashPassword,
-    ValidateEmail
+    ValidateEmail,
+    ValidatePassword
 }

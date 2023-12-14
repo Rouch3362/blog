@@ -6,7 +6,6 @@ const mongoose = require("mongoose")
 const User = new mongoose.Schema({
     name: {
         type: String,
-        required: true
     },
     username: {
         type: String,
@@ -14,13 +13,28 @@ const User = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
     },
     password: {
         type: String,
         required: true
     },
     profile_picture:{
+        type: String
+    }
+})
+
+const TwitterUser = new mongoose.Schema({
+    twitterId: {
+        type: String
+
+    },
+    username:{
+        tpye: String
+    },
+    name: {
+        type: String
+    },
+    profile_picture: {
         type: String
     }
 })
@@ -66,5 +80,6 @@ const Comment = new mongoose.Schema({
 module.exports = {
     UserSchema: mongoose.model("user" , User),
     BlogSchema: mongoose.model("blog" , Blog),
-    CommentSchema: mongoose.model("comment" , Comment)
+    CommentSchema: mongoose.model("comment" , Comment),
+    TwitterUser: mongoose.model("twitterUser" , TwitterUser , "users")
 }

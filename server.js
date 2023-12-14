@@ -2,6 +2,7 @@ const express =  require("express")
 const app = express()
 
 
+
 // template engine settings
 const ejs = require("ejs")
 app.set("view engine" , "ejs")
@@ -16,16 +17,29 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 
 
+
+
 // session and cookie settings
 const session = require("express-session")
-app.use(session({ 
-    secret:'amirali3362', 
-    saveUninitialized: true, 
-    resave: true
-})); 
+app.use(session({
+    secret: 'amirali3362',
+    resave: false,
+    saveUninitialized: false,
+}));
+
 // for messaging
 const flash = require("connect-flash")
 app.use(flash());
+
+// initialize passport js
+const passport = require("passport")
+app.use(passport.initialize())
+app.use(passport.session())
+require("./helpers/login")
+// twitter OAuth
+require("./helpers/twitterOAuth")
+
+
 
 // serving static files
 const path = require("path")
@@ -38,6 +52,8 @@ require("./db")
 
 // adding route files to main file
 app.use("/auth" , require("./routes/auth"))
+app.use("" , require("./routes/main"))
+
 
 
 app.listen(port ,() => {

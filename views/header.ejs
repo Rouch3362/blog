@@ -10,7 +10,7 @@
 <body class="">
     
     <% if (error || message) { %>
-        <%console.log(error)%>
+        
         <script>
             setTimeout(() => {
                 const alert = document.querySelector(".alert")
@@ -19,11 +19,12 @@
             }, 3000);
         </script>
         <% if (error.length > 0) { %>
+            <%console.log("ss")%>
             <div class="alert capitalize mt-20 text-white rounded-lg flex h-fit bg-red-500 absolute show flex-row items-center justify-center w-80 text-center px-5 py-2">
                 <%= error %>
             </div>
         <% } %>
-        <% if (message.length > 0) { %>
+        <% if (message.legth > 0) { %>
             <div class="alert capitalize mt-20 text-white rounded-lg flex h-fit  absolute show flex-row items-center justify-center w-80 text-center px-5 py-2 bg-green-500">
                 <%= message %>
             </div>
@@ -74,33 +75,36 @@
                 <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                   <a
                     class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
-                    href="#!"
+                    href="/"
                     data-te-nav-link-ref
                     data-te-ripple-init
                     data-te-ripple-color="light"
                     >Home</a
                   >
                 </li>
-                <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-                  <a
-                    class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
-                    href="#!"
-                    data-te-nav-link-ref
-                    data-te-ripple-init
-                    data-te-ripple-color="light"
-                    >Post</a
-                  >
-                </li>
-                <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-                  <a
-                    class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
-                    href="#!"
-                    data-te-nav-link-ref
-                    data-te-ripple-init
-                    data-te-ripple-color="light"
-                    >Profile</a
-                  >
-                </li>
+                <% if (isAuthenticated) { %>
+                    <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                        <a
+                          class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
+                          href="/post"
+                          data-te-nav-link-ref
+                          data-te-ripple-init
+                          data-te-ripple-color="light"
+                          >Post</a
+                        >
+                      </li>
+                      <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                        <a
+                          class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
+                          href="/profile"
+                          data-te-nav-link-ref
+                          data-te-ripple-init
+                          data-te-ripple-color="light"
+                          >Profile</a
+                        >
+                      </li>
+                <% } %>
+                
                 <li class="mb-2 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                   <a
                     class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
