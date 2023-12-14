@@ -1,0 +1,41 @@
+@keyframes show{
+    from{
+        display: none;
+        opacity: 0;
+        left: -50px;
+    }
+    to{
+        display: block;
+        opacity: 1;
+        left: 20px;
+    }
+}
+
+@keyframes hide {
+    0%{
+        display: block;
+        opacity: 1;
+        left: 20px;
+    }
+    50%{
+        display: block;
+        opacity: 1;
+        left: 30px;
+    }
+    100%{
+        display: none;
+        opacity: 0;
+        left: -50px;
+    }
+}
+
+.show{
+    animation: show 0.75s forwards;
+}
+.hide{
+    animation: hide 0.75s forwards;
+}
+
+.rsds{
+    font-size: xx-large;
+}
