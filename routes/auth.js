@@ -1,18 +1,11 @@
 const {Router} = require("express")
 const router = Router()
 const { UserSchema } = require("../db/schema")
-const { HashPassword , ValidateEmail } = require("../helpers/authHelper")
+const { HashPassword , ValidateEmail, CheckIfUserLoggedIn , PreventLoggingInAgain } = require("../helpers/authHelper")
 const passport = require("passport")
 
 
 
-const CheckIfUserLoggedIn = (req , res , next) => {
-    if(req.user){
-        req.flash("error" , "you're already logged in")
-        return res.redirect("/")
-    }
-    next()
-}
 
 router.route("/register")
 .get((req , res) => {
@@ -53,7 +46,7 @@ router.route("/register")
 
 
 router.route("/login")
-.get(CheckIfUserLoggedIn , (req , res) => {
+.get(PreventLoggingInAgain , (req , res) => {
     
     res.render("login.ejs" , {
         message: req.flash('message') , 
