@@ -24,7 +24,7 @@
                 <%= error %>
             </div>
         <% } %>
-        <% if (message.legth > 0) { %>
+        <% if (message.length > 0) { %>
             <div class="alert capitalize mt-20 text-white rounded-lg flex h-fit  absolute show flex-row items-center justify-center w-80 text-center px-5 py-2 bg-green-500">
                 <%= message %>
             </div>
@@ -115,6 +115,19 @@
                     >Register | Login</a
                   >
                 </li>
+                <% if (isAuthenticated) { %>
+                  <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                      <form
+                        class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
+                        action="/auth/logout"
+                        method="post"
+                        data-te-nav-link-ref
+                        data-te-ripple-init
+                        data-te-ripple-color="light"
+                        ><button>Logout</button></form
+                      >
+                    </li>
+              <% } %>
               </ul>
             </div>
           </div>
