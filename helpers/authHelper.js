@@ -1,6 +1,20 @@
 const bcrypt = require("bcrypt")
 
+const PreventLoggingInAgain = (req , res , next) => {
+    if(req.isAuthenticated()){
+        req.flash("error" , "you're already logged in")
+        return res.redirect("/")
+    }
+    next()
+}
 
+const CheckIfUserLoggedIn = (req ,res , next) => {
+    if (!req.isAuthenticated()){
+        req.flash("error" , "you need to login to your account to access to route")
+        return res.redirect("/auth/login")
+    }
+    next()
+}
 
 const HashPassword = (plain) => {
     const salt = bcrypt.genSaltSync()
@@ -22,5 +36,7 @@ const ValidateEmail = (email) => {
 module.exports = {
     HashPassword,
     ValidateEmail,
-    ValidatePassword
+    ValidatePassword,
+    PreventLoggingInAgain,
+    CheckIfUserLoggedIn
 }
