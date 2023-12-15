@@ -24,8 +24,8 @@ const connectMongo = require("connect-mongo")
 const session = require("express-session")
 app.use(session({
     secret: 'amirali3362',
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     store: connectMongo.create({mongoUrl: process.env.MONGO_URI})
 }));
 
