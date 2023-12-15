@@ -61,12 +61,27 @@ router.route("/login")
         isAuthenticated: req.isAuthenticated()
 })
 })
-.post(passport.authenticate("local" , {failureFlash : true , successRedirect: "/"}))
+.post(passport.authenticate("local" , {failureFlash : true}) , (req , res) => {
+    req.flash("message" , `welcom back ${req.user.name}`)
+    res.redirect("/")
+})
 
 
 router.get("/twitter" , passport.authenticate("twitter"))
 router.get("/twitter/callback" , passport.authenticate("twitter" , {failureRedirect: "/"}) , (req , res) => {
     res.redirect('/')
+})
+
+
+router.post("/logout" , (req , res) => {
+    req.logout((err) => {
+        if (err) { 
+            req.flash("error" , "couldn't logout try again")
+            return res.redirect("/")
+        }
+        req.flash("message" , "logged out successfully")
+        res.redirect("/auth/login")
+    })
 })
 
 module.exports = router
