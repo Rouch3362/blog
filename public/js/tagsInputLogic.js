@@ -1,4 +1,4 @@
-
+var tagsList = []
 
 window.addEventListener("DOMContentLoaded", (event) => {
     
@@ -7,7 +7,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
     // Get the tags and input elements from the DOM 
     var tags = document.getElementById('tags'); 
     var input = document.getElementById("input-tag"); 
-    var tagsList = []
+    
     
     input.addEventListener('keydown', function (event) { 
         console.log(tagsList.length)
