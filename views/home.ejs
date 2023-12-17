@@ -1,1 +1,19 @@
 <%- include("header") -%>
+
+    <div class="px-8 py-4">
+        <% for (let i = 0; i < blogs.length; i++) { %>
+            <article class="cursor-pointer border-b-2 pb-8 w-[680px] my-4 mx-auto flex items-center gap-5 px-3 py-2">
+            
+            <% if(blogs[i].thumbnail) { %>
+                <img class="w-32" src="data:image/<%=blogs[i].thumbnail.contentType%>;base64,
+                <%= blogs[i].thumbnail.data.toString('base64') %>"/>
+            <% } %>
+            <a href="/blogs/<%= blogs[i].id %>">
+                <div class="flex flex-col">
+                    <p class="text-[24px] font-semibold"><%= blogs[i].title %></p>
+                    <div class="line-clamp-3 mt-1.5"><%- blogs[i].body %></p>
+                </div>
+            </a>
+        </article>
+    </div>
+    <% } %>
