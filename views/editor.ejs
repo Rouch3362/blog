@@ -19,21 +19,28 @@
 
 
 <!-- Create the editor container -->
-<form action="/post" method="post" onsubmit="e => SendData(e)" class="relative py-10 px-4">
+<form enctype="multipart/form-data" action="/post" method="post" onsubmit="SendData()" class="relative py-10 px-4">
     <h1 class="mx-auto text-2xl font-semibold text-center mb-5">Write Whatever You Want</h1>
+    <div class="absolute top-3 right-56">
+        <label for="thumbnail" class="flex flex-row gap-5 justify-center items-center">Thumbnail:<img id="image" width="50" height="50" src="https://img.icons8.com/ios/50/image--v1.png" alt="image--v1"/></label>
+        <input onchange="showPreview()" accept="image/*" type="file" class="hidden" name="thumbnail" id="thumbnail">
+    </div>
+    <input  name="title" class="text-[32px] font-semibold mb-8 outline-none w-full px-5" placeholder="Add Your Title..." type="text">
     <div id="editor">
         
     </div>
-    <input name="text" type="text" class="hidden text" value="" />
+    <input name="body" type="text" class="hidden text" />
     <button class="absolute text-white top-3 gap-4 flex justify-center items-center bg-blue-600 px-6 py-2 rounded-xl right-10">Send <img width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/ffffff/sent.png" alt="sent"/></button>
-    
+    <!-- for tags input -->
+    <div class="tags-input top-4 left-10 flex flex-row justify-center items-center"> 
+        <ul id="tags"></ul> 
+        <input name="tags" type="text" id="input-tag" 
+            placeholder="Add Tags Up To 5" /> 
+    </div> 
 </form>
-<!-- for tags input -->
-<div class="tags-input top-16 left-2 flex flex-row justify-center items-center"> 
-    <ul id="tags"></ul> 
-    <input type="text" id="input-tag" 
-        placeholder="Add Tags Up To 5" /> 
-</div> 
+
+
+
 
 <!-- CloudFare CDN -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
@@ -83,12 +90,28 @@ var quill = new Quill('#editor', {
     placeholder: "Select Text For Editing. Write Your Text Here...."
 });
 
-const SendData = async (e) => {
-    const text = quill.root.innerHTML
-    document.querySelector(".text").value = text
-    console.log(document.querySelector(".text").value)
+
+const SendData = () => {
+    
+    if(quill.getText().length > 1){
+        const text = quill.root.innerHTML
+        document.querySelector(".text").value = text
+        document.querySelector("#input-tag").value = tagsList
+        console.log(document.querySelector(".text").value)
+
+    }
+    
 }
 
+var imgInp = document.querySelector("#thumbnail")
+var image = document.getElementById("image")
+function showPreview(){
+    console.log(imgInp.files)
+    const file = imgInp.files[0]
+    if (file) {
+        image.src = URL.createObjectURL(file)
+    }
+}
 
 </script>
 
