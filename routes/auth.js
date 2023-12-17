@@ -47,14 +47,13 @@ router.route("/register")
 
 router.route("/login")
 .get(PreventLoggingInAgain , (req , res) => {
-    
     res.render("login.ejs" , {
         message: req.flash('message') , 
         error: req.flash("error"),
         isAuthenticated: req.isAuthenticated()
 })
 })
-.post(passport.authenticate("local" , {failureFlash : true}) , (req , res) => {
+.post(passport.authenticate("local" , {failureFlash: true , failureRedirect: "/auth/login"}) , (req , res) => {
     req.flash("message" , `welcom back ${req.user.name}`)
     res.redirect("/")
 })
