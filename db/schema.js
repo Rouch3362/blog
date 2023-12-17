@@ -1,3 +1,4 @@
+const { SchemaTypes } = require("mongoose")
 const mongoose = require("mongoose")
 
 
@@ -21,8 +22,9 @@ const User = new mongoose.Schema({
     profile_picture:{
         type: String
     }
-})
+} , {timestamps: true})
 
+// twitter users collection this saves in user collection
 const TwitterUser = new mongoose.Schema({
     twitterId: {
         type: String
@@ -37,10 +39,14 @@ const TwitterUser = new mongoose.Schema({
     profile_picture: {
         type: String
     }
-})
+} , {timestamps: true})
 
 // blog (post) schema for storing posts 
 const Blog = new mongoose.Schema({
+    author:{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "user"
+    },
     title: {
         type: String,
         required: true
@@ -50,13 +56,21 @@ const Blog = new mongoose.Schema({
         required: true
     },
     thumbnail: {
-        type: String,
+        type: Object({
+            data: Buffer,
+            contentType: String,
+        }),
+        default: null
+        
     },
     likes: {
         type: Number,
         default: 0
+    },
+    tags: {
+        type: [String]
     }
-})
+} , {timestamps: true})
 
 
 
@@ -75,7 +89,7 @@ const Comment = new mongoose.Schema({
         type: String,
         required: true
     }
-})
+} , {timestamps: true})
 
 module.exports = {
     UserSchema: mongoose.model("user" , User),
