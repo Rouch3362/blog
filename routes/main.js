@@ -1,24 +1,11 @@
 const { Router } = require("express")
 const { CheckIfUserLoggedIn } = require("../helpers/authHelper")
 const { BlogSchema } = require("../db/schema")
+const { toBinary , upload} = require("../helpers/imageToBinary")
+
 
 const router = Router()
-const fs = require("fs")
-const path = require('path')
-const multer  = require('multer')
 
-
-
-const storage = multer.diskStorage({
-    destination: (req , file , next) => {
-        next(null , 'uploads')
-    },
-    filename: (req , file , next) =>{
-        next(null , file.fieldname + '-' + Date.now())
-    },
-})
-
-var upload = multer({storage: storage})
 
 router.get("/" , async (req , res) => {
     const blogs = await BlogSchema.find({}).populate("author")
@@ -31,9 +18,7 @@ router.get("/" , async (req , res) => {
     res.render("home" , {
         page: page,
         pageCount: pageCount,
-        posts: blogs.slice(page * 10 - 10 , page * 10),
-        user: req.user , 
-        blogs: blogs,
+        blogs: blogs.slice(page * 10 - 10 , page * 10),
         message: req.flash("message") , 
         error: req.flash("error") , 
         isAuthenticated: req.isAuthenticated()
@@ -50,20 +35,11 @@ router.route("/post")
     })
 })
 .post(upload.single('thumbnail') , async (req , res) => {
-    let { body , title , thumbnail , tags} = req.body
+    const { body , title } = req.body
+    let { thumbnail , tags } = req.body
     tags = tags.split(",")
     if (req.file) {
-        // read file and save it as binary data
-        thumbnail = {
-            data: fs.readFileSync(path.join("./uploads/" + req.file.filename)),
-            contentType: "image/png"
-        }
-        // remove the actual file from upload folder after read it and save it thumbnail object
-       fs.unlink(path.join("./uploads/" + req.file.filename) , (err) => {
-        if(err) {
-            return req.flash("error" , "something went wrong try again")
-        }
-       }) 
+        thumbnail = toBinary(req)
     }
 
     // if body or title is empty user can not save the blog
@@ -86,4 +62,18 @@ router.route("/post")
     
     
 })
+
+
+router.get("/blogs/:id" , async (req , res) => {
+    const { id } = req.params
+    const blog = await BlogSchema.findById(id).populate('author')
+    res.render("singleBlog.ejs" , {
+        blog: blog,
+        message: req.flash("message") , 
+        error: req.flash("error") , 
+        isAuthenticated: req.isAuthenticated()
+    })
+})
+
+
 module.exports = router
