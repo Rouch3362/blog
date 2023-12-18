@@ -26,7 +26,8 @@ app.use(session({
     secret: 'amirali3362',
     resave: true,
     saveUninitialized: true,
-    store: connectMongo.create({mongoUrl: process.env.MONGO_URI})
+    store: connectMongo.create({mongoUrl: process.env.MONGO_URI}),
+    // cookie:{maxAge: 60000 * 60 * 24 * 2}
 }));
 
 // for messaging
@@ -40,6 +41,8 @@ app.use(passport.session())
 require("./helpers/login")
 // twitter OAuth
 require("./helpers/twitterOAuth")
+// facebook OAuth
+// require("./helpers/facebookOAuth")
 
 
 
@@ -51,6 +54,12 @@ app.use(express.static(path.join(__dirname , "public")))
 // add database functionalities to app
 require("./db")
 
+
+// set user variable for accessing to all templates 
+app.use((req , res , next) => {
+    res.locals.user = req.user
+    next()
+})
 
 // adding route files to main file
 app.use("/auth" , require("./routes/auth"))
