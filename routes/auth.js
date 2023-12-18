@@ -3,7 +3,7 @@ const router = Router()
 const { UserSchema } = require("../db/schema")
 const { HashPassword , ValidateEmail, CheckIfUserLoggedIn , PreventLoggingInAgain } = require("../helpers/authHelper")
 const passport = require("passport")
-
+const { toBinary , upload } = require("../helpers/imageToBinary")
 
 
 
@@ -15,8 +15,9 @@ router.route("/register")
     isAuthenticated: req.isAuthenticated()
 })
 })
-.post(async (req , res) => {
+.post(upload.single("profile") , async (req , res) => {
     const {name , username , email} = req.body
+    let {profile} = req.body
     const userExist = await UserSchema.findOne({$or: [{email} , {username}]})
     if (!name || !username || !email || !req.body.password) {
         console.log("error");
@@ -32,7 +33,12 @@ router.route("/register")
         req.flash("error" , "email is not valid")
         return res.status(400).redirect("/auth/register")
     }
-    const user = await UserSchema.create({name , username , email , password})
+
+    if(req.file){
+        profile = toBinary(req)
+    }
+
+    const user = await UserSchema.create({name , username , email , password , profile_picture: profile})
     req.login(user , (err) => {
         if (err){
             req.flash("error" , "can not login automaticly")
