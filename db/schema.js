@@ -20,9 +20,17 @@ const User = new mongoose.Schema({
         required: true
     },
     profile_picture:{
-        type: String
+        type: Object({
+            data: Buffer,
+            contentType: String
+        }),
+        default: "https://img.icons8.com/parakeet-line/48/test-account.png"
     }
 } , {timestamps: true})
+
+
+
+
 
 // twitter users collection this saves in user collection
 const TwitterUser = new mongoose.Schema({
@@ -63,15 +71,23 @@ const Blog = new mongoose.Schema({
         default: null
         
     },
-    likes: {
-        type: Number,
-        default: 0
-    },
     tags: {
         type: [String]
     }
 } , {timestamps: true})
 
+
+// like collection
+const Like = new mongoose.Schema({
+    user: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'user'
+    },
+    blog: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'blog'
+    }
+})
 
 
 
@@ -91,9 +107,21 @@ const Comment = new mongoose.Schema({
     }
 } , {timestamps: true})
 
+
+
+
+User.pre('deleteOne' , (next) => {
+    Blog.remove({author: this._id})
+    Like.remove({user: this._id})
+    Comment.remove({user: this._id})
+    next()
+})
+
+
 module.exports = {
     UserSchema: mongoose.model("user" , User),
     BlogSchema: mongoose.model("blog" , Blog),
+    LikeSchema: mongoose.model("like" , Like),
     CommentSchema: mongoose.model("comment" , Comment),
     TwitterUser: mongoose.model("twitterUser" , TwitterUser , "users")
 }
