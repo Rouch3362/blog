@@ -1,8 +1,7 @@
 const { Router } = require("express")
 const { CheckIfUserLoggedIn } = require("../helpers/authHelper")
-const { BlogSchema } = require("../db/schema")
+const { BlogSchema, LikeSchema } = require("../db/schema")
 const { toBinary , upload} = require("../helpers/imageToBinary")
-
 
 const router = Router()
 
@@ -67,12 +66,37 @@ router.route("/post")
 router.get("/blogs/:id" , async (req , res) => {
     const { id } = req.params
     const blog = await BlogSchema.findById(id).populate('author')
+    if (!blog){
+        return res.status(404)
+    }
+    if(req.user){
+        // add two properties like and likeCount for accessing if user liked the post(blog) in view and seconde one for count of likes
+        blog.liked = await LikeSchema.findOne({user: req.user.id , blog: id}) ? true : false
+        blog.likeCount = (await LikeSchema.find({blog: id})).length
+    }
     res.render("singleBlog.ejs" , {
         blog: blog,
         message: req.flash("message") , 
         error: req.flash("error") , 
         isAuthenticated: req.isAuthenticated()
     })
+})
+
+
+router.post('/blogs/:id/like', CheckIfUserLoggedIn , async (req , res) => {
+    const { id } = req.params
+    const liked = await LikeSchema.findOne({blog: id , user: req.user.id})
+
+    if(liked){
+        // if it's liked by this user before it will be unliked
+        await LikeSchema.findOneAndDelete({blog: id , user: req.user.id})
+    }
+    else{
+        // add a recored to db
+        await LikeSchema.create({blog: id, user: req.user.id})
+    }
+    res.redirect(`/blogs/${id}`)
+
 })
 
 
