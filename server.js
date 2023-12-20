@@ -27,7 +27,6 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     store: connectMongo.create({mongoUrl: process.env.MONGO_URI}),
-    // cookie:{maxAge: 60000 * 60 * 24 * 2}
 }));
 
 // for messaging
@@ -62,9 +61,8 @@ app.use((req , res , next) => {
 })
 
 // adding route files to main file
-app.use("/auth" , require("./routes/auth"))
 app.use("" , require("./routes/main"))
-
+app.use("/auth" , require("./routes/auth"))
 
 
 app.listen(port ,() => {

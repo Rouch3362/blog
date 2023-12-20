@@ -60,14 +60,14 @@ router.route("/login")
 })
 })
 .post(passport.authenticate("local" , {failureFlash: true , failureRedirect: "/auth/login"}) , (req , res) => {
-    req.flash("message" , `welcom back ${req.user.name}`)
+    req.flash("message" , `welcome back ${req.user.name}`)
     res.redirect("/")
 })
 
 
 router.get("/twitter" , passport.authenticate("twitter"))
 router.get("/twitter/callback" , passport.authenticate("twitter" , {failureRedirect: "/"}) , (req , res) => {
-    res.redirect('/')
+    res.redirect("/")
 })
 
 
