@@ -25,6 +25,9 @@ const User = new mongoose.Schema({
             contentType: String
         }),
         default: "https://img.icons8.com/parakeet-line/48/test-account.png"
+    },
+    about:{
+        type: String
     }
 } , {timestamps: true})
 
@@ -63,13 +66,16 @@ const Blog = new mongoose.Schema({
         type: String,
         required: true
     },
+    preview:{
+        type: String,
+        required: true
+    },
     thumbnail: {
         type: Object({
             data: Buffer,
             contentType: String,
         }),
         default: null
-        
     },
     tags: {
         type: [String]
