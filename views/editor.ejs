@@ -30,6 +30,7 @@
         
     </div>
     <input name="body" type="text" class="hidden text" />
+    <input name="preview" type="text" class="hidden preview" />
     <button class="absolute text-white top-3 gap-4 flex justify-center items-center bg-blue-600 px-6 py-2 rounded-xl right-10">Send <img width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/ffffff/sent.png" alt="sent"/></button>
     <!-- for tags input -->
     <div class="tags-input top-4 left-10 flex flex-row justify-center items-center"> 
@@ -58,6 +59,7 @@
 
 <!-- Initialize Quill editor -->
 <script>
+
   var toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
   ['link' , 'blockquote', 'code-block' , "image" , "video"],
@@ -95,6 +97,7 @@ const SendData = () => {
     
     if(quill.getText().length > 1){
         const text = quill.root.innerHTML
+        document.querySelector(".preview").value = quill.getText()
         document.querySelector(".text").value = text
         document.querySelector("#input-tag").value = tagsList
         console.log(document.querySelector(".text").value)
