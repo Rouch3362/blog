@@ -24,7 +24,7 @@ const connectMongo = require("connect-mongo")
 const session = require("express-session")
 app.use(session({
     secret: 'amirali3362',
-    resave: true,
+    resave: false,
     saveUninitialized: true,
     store: connectMongo.create({mongoUrl: process.env.MONGO_URI}),
 }));
@@ -63,6 +63,7 @@ app.use((req , res , next) => {
 // adding route files to main file
 app.use("" , require("./routes/main"))
 app.use("/auth" , require("./routes/auth"))
+app.use("" , require("./routes/profile"))
 
 
 app.listen(port ,() => {
