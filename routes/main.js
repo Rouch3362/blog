@@ -2,7 +2,7 @@ const { Router } = require("express")
 const { CheckIfUserLoggedIn } = require("../helpers/authHelper")
 const { BlogSchema, LikeSchema } = require("../db/schema")
 const { toBinary , upload} = require("../helpers/imageToBinary")
-
+const { isValidObjectId } = require("mongoose")
 const router = Router()
 
 
@@ -34,7 +34,7 @@ router.route("/post")
     })
 })
 .post(upload.single('thumbnail') , async (req , res) => {
-    const { body , title } = req.body
+    const { body , title , preview} = req.body
     let { thumbnail , tags } = req.body
     tags = tags.split(",")
     if (req.file) {
@@ -48,7 +48,7 @@ router.route("/post")
     }
 
     // save the blog to database
-    const blog = await BlogSchema.create({author: req.user.id ,title,body,thumbnail , tags})
+    const blog = await BlogSchema.create({author: req.user.id , title , body , preview , thumbnail , tags})
     
     if (blog){
         req.flash("message" , "congrats!! your blog posted successfully")
@@ -65,9 +65,14 @@ router.route("/post")
 
 router.get("/blogs/:id" , async (req , res) => {
     const { id } = req.params
+
+    if(!isValidObjectId(id)){
+        return res.status(400).send("invalid params")
+    }
+
     const blog = await BlogSchema.findById(id).populate('author')
     if (!blog){
-        return res.status(404)
+        return res.sendStatus(404)
     }
     if(req.user){
         // add two properties like and likeCount for accessing if user liked the post(blog) in view and seconde one for count of likes
