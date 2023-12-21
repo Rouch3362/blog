@@ -67,10 +67,10 @@
               class="!visible hidden grow basis-[100%] items-center lg:!flex lg:basis-auto"
               id="navbarSupportedContentX"
               data-te-collapse-item>
-              <ul
+              <sec
                 class="mr-auto flex flex-col lg:flex-row"
                 data-te-navbar-nav-ref>
-                <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                <div class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                   <a
                     class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
                     href="/"
@@ -79,9 +79,9 @@
                     data-te-ripple-color="light"
                     >Home</a
                   >
-                </li>
+                </div>
                 <% if (isAuthenticated) { %>
-                    <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                    <div class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                         <a
                           class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
                           href="/post"
@@ -90,8 +90,8 @@
                           data-te-ripple-color="light"
                           >Post</a
                         >
-                      </li>
-                      <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                      </div>
+                      <div class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                         <a
                           class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
                           href="/profile"
@@ -100,10 +100,10 @@
                           data-te-ripple-color="light"
                           >Profile</a
                         >
-                      </li>
+                      </div>
                 <% } %>
                 
-                <li class="mb-2 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                <div class="mb-2 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                   <a
                     class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
                     href="/auth/register"
@@ -112,9 +112,9 @@
                     data-te-ripple-color="light"
                     >Register<% if (!isAuthenticated) { %> | Login <% } %> <% if(isAuthenticated) { %> New Account <% } %></a
                   >
-                </li>
+                </div>
                 <% if (isAuthenticated) { %>
-                  <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                  <div class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                       <form
                         class="block transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:hover:text-white dark:focus:text-white lg:p-2 [&.active]:text-black/90"
                         action="/auth/logout"
@@ -124,9 +124,9 @@
                         data-te-ripple-color="light"
                         ><button>Logout</button></form
                       >
-                    </li>
+                    </div>
               <% } %>
-              </ul>
+                  </section>
             </div>
           </div>
         </nav>
