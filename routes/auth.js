@@ -61,7 +61,7 @@ router.route("/login")
 })
 .post(passport.authenticate("local" , {failureFlash: true , failureRedirect: "/auth/login"}) , (req , res) => {
     req.flash("message" , `welcome back ${req.user.name}`)
-    res.redirect("/")
+    res.redirect('/')
 })
 
 
