@@ -6,7 +6,6 @@ const { ValidatePassword } = require("./authHelper")
 
 // username in this block of code can be email or actual username
 passport.use(new Strategy({passReqToCallback: true} , async (req, username,  password , done) => {
-    console.log(username, password)
     // if user forgot to enter the credentials
     if (!username || !password){
         return done(null , false , req.flash("error", "missing credentials"))
