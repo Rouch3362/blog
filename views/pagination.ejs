@@ -3,11 +3,12 @@
         <a class="text-blue-600 bg-blue-200 rounded-md w-8 h-8 rotate-[270deg] flex justify-center items-center text-center" href="?page=1"><img width="48" height="48" src="https://img.icons8.com/sf-regular-filled/48/2563eb/double-up.png" alt="double-up"/></a>
         <a class="text-blue-600 bg-blue-200 rounded-md rotate-180 w-8 h-8 flex justify-center items-center text-center" href="?page=<%= page - 1 %>"><img width="48" class="w-5" height="48" src="https://img.icons8.com/ios-filled/50/2563eb/forward--v1.png" alt="forward--v1"/></a>
         <% if(page != pageCount) { %>
-            <a class="text-blue-600 bg-blue-200 rounded-md w-8 h-8 flex justify-center items-center text-center" href="?page=<%= page %>"><%= page %></a>
+            <a class="text-blue-600 bg-blue-400 rounded-md w-8 h-8 flex justify-center items-center text-center" href="?page=<%= page %>"><%= page %></a>
+            
             <div class="text-blue-600 bg-blue-200 rounded-md w-8 h-8 flex justify-center items-center text-center">.....</div>
         <% } %>
             
-        <a class="text-blue-600 bg-blue-200 rounded-md w-8 h-8 flex justify-center items-center text-center" href="?page=<% pageCount %>"><%= pageCount %></a>
+        <a class="text-blue-600 bg-blue-200 rounded-md w-8 h-8 flex justify-center items-center text-center" href="?page=<%= pageCount %>"><%= pageCount %></a>
         <a class="text-blue-600 bg-blue-200 rounded-md w-8 h-8 flex justify-center items-center text-center"  href="?page=<%= page+1 %>"><img width="48" height="48" class="w-5" src="https://img.icons8.com/ios-filled/50/2563eb/forward--v1.png" alt="forward--v1"/></a>
         <a class="text-blue-600 bg-blue-200 rounded-md w-8 h-8 rotate-90 flex justify-center items-center text-center"  href="?page=<%= pageCount %>"><img width="48" height="48" src="https://img.icons8.com/sf-regular-filled/48/2563eb/double-up.png" alt="double-up"/></a>
     </footer>
