@@ -304,9 +304,24 @@ function calculateReadingTime(text){
 <div class="flex flex-col justify-center px-2 gap-5 w-[720px] mx-auto py-14">
     <h1 class="text-4xl font-bold"><%= blog.title %></h1>
     <div class="float-left flex gap-4 items-center">
-        <img class="object-cover w-16 rounded-full" src="data:image/<%= blog.author.profile_picture.contentType%>;base64,<%= blog.author.profile_picture.data.toString('base64') %>" alt="">
+        <% if (blog.author.profile_picture) { %>
+            <img class="object-cover w-16 rounded-full" src="data:image/<%= blog.author.profile_picture.contentType%>;base64,<%= blog.author.profile_picture.data.toString('base64') %>" alt="">
+        <% } else { %>
+            <img class="object-cover w-16 rounded-full" width="96" height="96" src="https://img.icons8.com/parakeet-line/96/test-account.png" alt="test-account"/>
+        <% } %> 
         <div>
-            <a href="/writers/<%=blog.author.id%>" class="capitalize font-semibold"><%= blog.author.name %><a href="" class="text-blue-400 ml-5">Follow</a></a>
+            <div class="flex flex-col justify">
+                <a href="/writers/<%=blog.author.id%>" class="capitalize font-semibold"><%= blog.author.name %></a>
+                <% if (authenticatedUser.id !== blog.author.id) { %>
+                    <form action="/follow/<%=blog.author.id%>" method="post">
+                        <% if (isFollowing) { %>
+                            <button class="text-green-400 ml-3">Following</button>
+                        <% } else { %>
+                            <button class="text-blue-400 ml-3">Follow</button>
+                        <% } %>
+                    </form>
+                <% } %>
+            </div>
             <div class="flex gap-2 text-sm text-gray-500">
                 <p><%= calculateReadingTime(blog.body) %></p>
                 .
@@ -314,26 +329,30 @@ function calculateReadingTime(text){
             </div>
         </div>
     </div>
-    <div class="py-8 border-y-2 flex justify-between items-center">
-        <form action="/blogs/<%=blog.id%>/like" method="post">
-           <button>
-            <% if (blog.liked){ %>
-                <img class="w-7 cursor-pointer" width="48" height="48" src="https://img.icons8.com/material-rounded/48/facebook-like--v1.png" alt="facebook-like--v1"/>
-            <% } else { %>
-                <img class="w-7 cursor-pointer" width="48" height="48" src="https://img.icons8.com/material-outlined/48/facebook-like--v1.png" alt="facebook-like--v1"/>
-            <% } %>
-            <d class="text-md font-semibold"><%= blog.likeCount %></p>
-           </button>
-        </form>
-        <img class="w-7 cursor-pointer" width="64" height="64" src="https://img.icons8.com/windows/64/speech-bubble--v1.png" alt="speech-bubble--v1"/>
-        <img class="w-7 cursor-pointer" width="48" height="48" src="https://img.icons8.com/fluency-systems-regular/48/bookmark-ribbon--v1.png" alt="bookmark-ribbon--v1"/>
-    </div>
+    <% if (blog.author.id != user.id) { %>
+        <div class="py-8 border-y-2 flex justify-between items-center">
+            <form action="/blogs/<%=blog.id%>/like" method="post">
+               <button>
+                <% if (blog.liked){ %>
+                    <img class="w-7 cursor-pointer" width="48" height="48" src="https://img.icons8.com/material-rounded/48/facebook-like--v1.png" alt="facebook-like--v1"/>
+                <% } else { %>
+                    <img class="w-7 cursor-pointer" width="48" height="48" src="https://img.icons8.com/material-outlined/48/facebook-like--v1.png" alt="facebook-like--v1"/>
+                <% } %>
+                <d class="text-md font-semibold"><%= blog.likeCount %></p>
+               </button>
+            </form>
+            <img class="w-7 cursor-pointer" width="64" height="64" src="https://img.icons8.com/windows/64/speech-bubble--v1.png" alt="speech-bubble--v1"/>
+            <img class="w-7 cursor-pointer" width="48" height="48" src="https://img.icons8.com/fluency-systems-regular/48/bookmark-ribbon--v1.png" alt="bookmark-ribbon--v1"/>
+        </div>
+    <% } %>
     
     <div class="ql-editor"><%- blog.body %></div>
-    
-    <div class="flex gap-3 font-semibold">
-        <% for (let i = 0; i < blog.tags.length; i++){ %>
-            <p class="w-fit px-4 py-2 bg-gray-300 rounded-3xl"><%= blog.tags[i] %></p>
-        <% } %>
-    </div>
+
+    <% if (blog.tags.length > 1) { %>
+        <div class="flex gap-3 font-semibold">
+            <% for (let i = 0; i < blog.tags.length; i++){ %>
+                <p class="w-fit px-4 py-2 bg-gray-300 rounded-3xl"><%= blog.tags[i] %></p>
+            <% } %>
+        </div>
+    <% } %>
 </div>
