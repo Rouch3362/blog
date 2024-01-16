@@ -1,13 +1,16 @@
 <% for (let i = 0; i < blogs.length; i++) { %>
-    <article class="cursor-pointer relative border-b-2 py-8 w-[680px] my-4 mx-auto flex items-center gap-5 px-3">
+    <article class="cursor-pointer artic relative border-b-2 py-8 w-[680px] my-4 mx-auto grid items-center gap-5 px-3">
         
+    
     <% if(blogs[i].thumbnail != null) { %>
-        <img class="w-[200px] h-[150px] object-cover" src="data:image/<%=blogs[i].thumbnail.contentType%>;base64,
+        <img class="w-[200px] img h-[150px] object-cover" src="data:image/<%=blogs[i].thumbnail.contentType%>;base64,
         <%= blogs[i].thumbnail.data.toString('base64') %>"/>
     <% } %>
-    <div  class="flex flex-col">
+    <div  class="flex flex-col details">
             <a href="/writers/<%= blogs[i].author.id %>" class="font-semibold flex flex-row items-center gap-1.5">
-                <img class="w-8 rounded-full object-cover" src="data:image/<%=blogs[i].author.profile_picture.contentType%>;base64,<%= blogs[i].author.profile_picture.data.toString('base64') %>" alt="">
+                <% if (blogs[i].author.profile_picture) { %>
+                    <img class="w-8 rounded-full object-cover" src="data:image/<%=blogs[i].author.profile_picture.contentType%>;base64,<%= blogs[i].author.profile_picture.data.toString('base64') %>" alt="">
+                <% } %>
                 <p class=""><%= blogs[i].author.username %></p>
             </a>
             <a href="/blogs/<%=blogs[i].id%>">
@@ -16,5 +19,12 @@
             </a>
     </div>
 </article>
+
+<style>
+    .artic{
+        grid-template-columns: 3fr 7fr;
+    }
+</style>
+
 <% } %>
 <%- include("pagination") %>
