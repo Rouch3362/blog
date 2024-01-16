@@ -101,11 +101,11 @@ const Like = new mongoose.Schema({
 const Comment = new mongoose.Schema({
     user: {
         type: mongoose.SchemaTypes.ObjectId,
-        ref: "User"
+        ref: "user"
     },
     blog: {
         type: mongoose.SchemaTypes.ObjectId,
-        ref: "Blog"
+        ref: "blog"
     },
     body:{
         type: String,
@@ -114,6 +114,19 @@ const Comment = new mongoose.Schema({
 } , {timestamps: true})
 
 
+const Follow = new mongoose.Schema({
+    follower: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'user'
+    },
+    following: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "user"
+    }
+},
+{
+    timestamps: true
+})
 
 
 User.pre('deleteOne' , (next) => {
@@ -129,5 +142,6 @@ module.exports = {
     BlogSchema: mongoose.model("blog" , Blog),
     LikeSchema: mongoose.model("like" , Like),
     CommentSchema: mongoose.model("comment" , Comment),
-    TwitterUser: mongoose.model("twitterUser" , TwitterUser , "users")
+    TwitterUser: mongoose.model("twitterUser" , TwitterUser , "users"),
+    FollowSchema: mongoose.model("follow" , Follow)
 }
