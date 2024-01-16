@@ -1,19 +1,23 @@
 const { Router } = require("express")
 const { CheckIfUserLoggedIn } = require("../helpers/authHelper")
-const { BlogSchema, LikeSchema } = require("../db/schema")
+const { BlogSchema, LikeSchema, FollowSchema } = require("../db/schema")
 const { toBinary , upload} = require("../helpers/imageToBinary")
 const { isValidObjectId } = require("mongoose")
+const sanitizeHtml = require("sanitize-html")
 const router = Router()
 
 
 router.get("/" , async (req , res) => {
-    const blogs = await BlogSchema.find({}).populate("author")
+    const blogs = await BlogSchema.find({}).sort({_id: -1}).populate("author")
     const pageCount = Math.ceil(blogs.length / 10);
     let page = parseInt(req.query.page);
     if (!page) { page = 1;}
     if (page > pageCount) {
         page = pageCount
     }
+    
+    
+    
     res.render("home" , {
         page: page,
         pageCount: pageCount,
@@ -34,8 +38,11 @@ router.route("/post")
     })
 })
 .post(upload.single('thumbnail') , async (req , res) => {
-    const { body , title , preview} = req.body
-    let { thumbnail , tags } = req.body
+    let { body , title , preview , thumbnail , tags } = req.body
+    tags = sanitizeHtml(tags)
+    body = sanitizeHtml(body)
+    title = sanitizeHtml(title)
+    previw = sanitizeHtml(preview)
     tags = tags.split(",")
     if (req.file) {
         thumbnail = toBinary(req)
@@ -65,7 +72,6 @@ router.route("/post")
 
 router.get("/blogs/:id" , async (req , res) => {
     const { id } = req.params
-
     if(!isValidObjectId(id)){
         return res.status(400).send("invalid params")
     }
@@ -79,11 +85,16 @@ router.get("/blogs/:id" , async (req , res) => {
         blog.liked = await LikeSchema.findOne({user: req.user.id , blog: id}) ? true : false
         blog.likeCount = (await LikeSchema.find({blog: id})).length
     }
+
+    const checkUserFollowed = await FollowSchema.findOne({$and: [{follower: req.user.id} , {following: blog.author.id}]})
+
     res.render("singleBlog.ejs" , {
         blog: blog,
         message: req.flash("message") , 
         error: req.flash("error") , 
-        isAuthenticated: req.isAuthenticated()
+        isAuthenticated: req.isAuthenticated(),
+        isFollowing: checkUserFollowed ? true : false,
+        authenticatedUser: req.user
     })
 })
 
