@@ -3,6 +3,7 @@ const router = Router()
 const { UserSchema } = require("../db/schema")
 const { HashPassword , ValidateEmail, CheckIfUserLoggedIn , PreventLoggingInAgain } = require("../helpers/authHelper")
 const passport = require("passport")
+const sanitizeHtml = require("sanitize-html")
 const { toBinary , upload } = require("../helpers/imageToBinary")
 
 
@@ -16,8 +17,10 @@ router.route("/register")
 })
 })
 .post(upload.single("profile") , async (req , res) => {
-    const {name , username , email} = req.body
-    let {profile} = req.body
+    let {name , username , email , profile} = req.body
+    name = sanitizeHtml(name)
+    username = sanitizeHtml(username)
+    email = sanitizeHtml(email)
     const userExist = await UserSchema.findOne({$or: [{email} , {username}]})
     if (!name || !username || !email || !req.body.password) {
         console.log("error");
