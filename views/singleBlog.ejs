@@ -301,8 +301,19 @@ function calculateReadingTime(text){
     }
 </style>
 
-<div class="flex flex-col justify-center px-2 gap-5 w-[720px] mx-auto py-14">
-    <h1 class="text-4xl font-bold"><%= blog.title %></h1>
+<div class="flex flex-col relative justify-center px-2 gap-5 w-[720px] mx-auto py-14">
+    
+    <div class="flex justify-between items-center">
+        <h1 class="text-4xl font-bold"><%= blog.title %></h1>
+        <% if (isAuthenticated && (user.id == blog.author.id)) { %>
+            <div class="flex gap-2 top-20 right-5">
+                <form method="post" action="/blogs/delete/<%=blog.id%>">
+                    <button class="px-5 text-white py-2 bg-red-600 rounded-md">Delete</button>
+                </form>
+                <a href="" class="px-5 text-white py-2 bg-green-600 rounded-md">Edit</a>
+            </div>
+        <% } %>
+    </div>
     <div class="float-left flex gap-4 items-center">
         <% if (blog.author.profile_picture) { %>
             <img class="object-cover w-16 rounded-full" src="data:image/<%= blog.author.profile_picture.contentType%>;base64,<%= blog.author.profile_picture.data.toString('base64') %>" alt="">
@@ -312,7 +323,7 @@ function calculateReadingTime(text){
         <div>
             <div class="flex flex-col justify">
                 <a href="/writers/<%=blog.author.id%>" class="capitalize font-semibold"><%= blog.author.name %></a>
-                <% if (authenticatedUser.id !== blog.author.id) { %>
+                <% if (isAuthenticated && (user.id !== blog.author.id)) { %>
                     <form action="/follow/<%=blog.author.id%>" method="post">
                         <% if (isFollowing) { %>
                             <button class="text-green-400 ml-3">Following</button>
@@ -329,7 +340,7 @@ function calculateReadingTime(text){
             </div>
         </div>
     </div>
-    <% if (blog.author.id != user.id) { %>
+    <% if (isAuthenticated && (blog.author.id != user.id)) { %>
         <div class="py-8 border-y-2 flex justify-between items-center">
             <form action="/blogs/<%=blog.id%>/like" method="post">
                <button>
@@ -341,13 +352,12 @@ function calculateReadingTime(text){
                 <d class="text-md font-semibold"><%= blog.likeCount %></p>
                </button>
             </form>
-            <img class="w-7 cursor-pointer" width="64" height="64" src="https://img.icons8.com/windows/64/speech-bubble--v1.png" alt="speech-bubble--v1"/>
-            <img class="w-7 cursor-pointer" width="48" height="48" src="https://img.icons8.com/fluency-systems-regular/48/bookmark-ribbon--v1.png" alt="bookmark-ribbon--v1"/>
+            <a href="#comment-section"><img class="w-7 cursor-pointer" width="64" height="64" src="https://img.icons8.com/windows/64/speech-bubble--v1.png" alt="speech-bubble--v1"/></a>
+            <img class="w-7 cursor-pointer" width="48" height="48"  src="https://img.icons8.com/fluency-systems-regular/48/bookmark-ribbon--v1.png" alt="bookmark-ribbon--v1"/>
         </div>
     <% } %>
     
-    <div class="ql-editor"><%- blog.body %></div>
-
+    <div class="ql-editor border-b-2 pb-8"><%- blog.body %></div>
     <% if (blog.tags.length > 1) { %>
         <div class="flex gap-3 font-semibold">
             <% for (let i = 0; i < blog.tags.length; i++){ %>
@@ -355,4 +365,5 @@ function calculateReadingTime(text){
             <% } %>
         </div>
     <% } %>
+    <%- include("commentSection") %>
 </div>
