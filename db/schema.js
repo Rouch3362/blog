@@ -24,7 +24,6 @@ const User = new mongoose.Schema({
             data: Buffer,
             contentType: String
         }),
-        default: "https://img.icons8.com/parakeet-line/48/test-account.png"
     },
     about:{
         type: String
@@ -110,6 +109,9 @@ const Comment = new mongoose.Schema({
     body:{
         type: String,
         required: true
+    },
+    reply:{
+        type: String,
     }
 } , {timestamps: true})
 
