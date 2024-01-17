@@ -48,7 +48,7 @@ router.route("/register")
             return res.redirect("/auth/login")
         }
         req.flash("message" , "created account and logged in successfully")
-        return res.redirect("/")
+        return res.redirect(req.headers.referer || "/")
     })
     
 })
@@ -64,13 +64,13 @@ router.route("/login")
 })
 .post(passport.authenticate("local" , {failureFlash: true , failureRedirect: "/auth/login"}) , (req , res) => {
     req.flash("message" , `welcome back ${req.user.name}`)
-    res.redirect('/')
+    res.redirect(req.headers.referer || "/")
 })
 
 
 router.get("/twitter" , passport.authenticate("twitter"))
 router.get("/twitter/callback" , passport.authenticate("twitter" , {failureRedirect: "/"}) , (req , res) => {
-    res.redirect("/")
+    res.redirect(req.headers.referer || "/")
 })
 
 
