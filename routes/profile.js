@@ -5,7 +5,7 @@ const { CheckIfUserLoggedIn } = require("../helpers/authHelper")
 const router = Router()
 
 
-router.get("/writers/:id" , async (req , res) => {
+router.get("/writers/:id" , CheckIfUserLoggedIn ,async (req , res) => {
     const {id} = req.params
     
     if(!isValidObjectId(id)){
@@ -19,7 +19,9 @@ router.get("/writers/:id" , async (req , res) => {
 
     // user.followers
     const userBlogs = await BlogSchema.find({author: user.id}).populate("author")
+
     const checkUserFollowed = await FollowSchema.findOne({$and: [{follower: req.user.id} , {following: id}]})
+    
     const pageCount = Math.ceil(userBlogs.length / 10);
     let page = parseInt(req.query.page);
     if (!page) { page = 1;}
@@ -35,7 +37,6 @@ router.get("/writers/:id" , async (req , res) => {
         message: req.flash("message"),
         error: req.flash("error"),
         isFollowing: checkUserFollowed ? true : false,
-        authenticatedUser: req.user
     })
 })
 
@@ -45,15 +46,14 @@ router.post("/follow/:id" , CheckIfUserLoggedIn , async (req , res) => {
 
     if (followerId == followingId) {
         req.flash("error" , `you can't follow yourself`)
-        return res.redirect(req.headers.referer)
+        return res.redirect(403 ,req.headers.referer)
     }
 
     const followUser = await UserSchema.findById(followingId)
 
-    const checkUserFollowed = await FollowSchema.findOne({$and: [{follower: followerId} , {following: followingId}]})
+    const checkUserFollowed = await FollowSchema.findOneAndDelete({$and: [{follower: followerId} , {following: followingId}]})
     
     if (checkUserFollowed) {
-        await FollowSchema.deleteOne({$and: [{follower: followerId} , {following: followingId}]})
         req.flash("error" , `${followUser.username} removed from your followings`)
         return res.redirect(req.headers.referer)
     }
