@@ -1,6 +1,6 @@
 const { Router } = require("express")
 const { CheckIfUserLoggedIn } = require("../helpers/authHelper")
-const { BlogSchema, LikeSchema, FollowSchema } = require("../db/schema")
+const { BlogSchema, LikeSchema, FollowSchema, CommentSchema } = require("../db/schema")
 const { toBinary , upload} = require("../helpers/imageToBinary")
 const { isValidObjectId } = require("mongoose")
 const sanitizeHtml = require("sanitize-html")
@@ -60,10 +60,11 @@ router.route("/post")
     if (blog){
         req.flash("message" , "congrats!! your blog posted successfully")
     
-        res.redirect("/")
+        res.redirect(req.headers.referer || `/blogs/${blog.id}`)
     }
     else{
         req.flash("error" , "something went wrong try again")
+        res.redirect("/post")
     }
     
     
@@ -84,9 +85,12 @@ router.get("/blogs/:id" , async (req , res) => {
         // add two properties like and likeCount for accessing if user liked the post(blog) in view and seconde one for count of likes
         blog.liked = await LikeSchema.findOne({user: req.user.id , blog: id}) ? true : false
         blog.likeCount = (await LikeSchema.find({blog: id})).length
+        blog.comments = await CommentSchema.find({blog: id}).populate('user')
     }
 
-    const checkUserFollowed = await FollowSchema.findOne({$and: [{follower: req.user.id} , {following: blog.author.id}]})
+    if (req.isAuthenticated()) {
+        var checkUserFollowed = await FollowSchema.findOne({$and: [{follower: req.user.id} , {following: blog.author.id}]})
+    }
 
     res.render("singleBlog.ejs" , {
         blog: blog,
@@ -94,26 +98,72 @@ router.get("/blogs/:id" , async (req , res) => {
         error: req.flash("error") , 
         isAuthenticated: req.isAuthenticated(),
         isFollowing: checkUserFollowed ? true : false,
-        authenticatedUser: req.user
     })
 })
 
 
 router.post('/blogs/:id/like', CheckIfUserLoggedIn , async (req , res) => {
     const { id } = req.params
-    const liked = await LikeSchema.findOne({blog: id , user: req.user.id})
+    // if user already liked deletes it
+    const liked = await LikeSchema.findOneAndDelete({blog: id , user: req.user.id})
 
-    if(liked){
-        // if it's liked by this user before it will be unliked
-        await LikeSchema.findOneAndDelete({blog: id , user: req.user.id})
-    }
-    else{
+
+    if (!liked){
         // add a recored to db
         await LikeSchema.create({blog: id, user: req.user.id})
     }
     res.redirect(`/blogs/${id}`)
 
 })
+
+
+
+
+router.post('/blogs/delete/:id' , CheckIfUserLoggedIn , async (req , res) => {
+    const { id: blogId } = req.params
+    const blog = await BlogSchema.findById(blogId)
+
+    if (!blog) {
+        req.flash("error" , "blog not found")
+        return res.redirect(404, req.headers.referer || "/")
+    }
+
+    if (req.user.id != blog.author._id) {
+        req.flash("error" , "Permission Denied")
+        return res.redirect(403 , req.headers.referer || `/blogs/${blogId}`)
+    }
+    
+    const deletedBlog = await BlogSchema.deleteOne({_id: blogId})
+
+    if (!deletedBlog) {
+        req.flash("error" , "something went wrong try again")
+        return res.redirect(req.headers.referer || `/blogs/${blogId}`)
+    }
+    req.flash("message" , `"${blog.title}" blog deleted successfully`)
+    res.redirect('/')
+})
+
+router.post("/blogs/comment/:id" , CheckIfUserLoggedIn , async (req , res) => {
+    const { id: blogId } = req.params
+    let { body } = req.body
+    body = sanitizeHtml(body)
+
+    if (!body.trim()) {
+        req.flash("error" , "Comment can not be empty")
+        return res.redirect(400 , req.headers.referer || `/blogs/${blogId}`)
+    }
+
+    const comment = await CommentSchema.create({user: req.user.id , body , blog: blogId})
+
+    if (!comment) {
+        req.flash("error" , "something went wrong try again")
+        return res.redirect(req.headers.referer || `/blogs/${blogId}`)
+    }
+
+    req.flash("message" , "your comment posted")
+    res.redirect(req.headers.referer || `/blogs/${blogId}`)
+})
+
 
 
 module.exports = router
