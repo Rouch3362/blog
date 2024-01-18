@@ -2,7 +2,7 @@ const { Router } = require("express")
 const { CheckIfUserLoggedIn } = require("../helpers/authHelper")
 const { BlogSchema, LikeSchema, FollowSchema, CommentSchema } = require("../db/schema")
 const { toBinary , upload} = require("../helpers/imageToBinary")
-const { isValidObjectId } = require("mongoose")
+const { Types , isValidObjectId } = require("mongoose")
 const sanitizeHtml = require("sanitize-html")
 const router = Router()
 
@@ -85,9 +85,10 @@ router.get("/blogs/:id" , async (req , res) => {
         // add two properties like and likeCount for accessing if user liked the post(blog) in view and seconde one for count of likes
         blog.liked = await LikeSchema.findOne({user: req.user.id , blog: id}) ? true : false
         blog.likeCount = (await LikeSchema.find({blog: id})).length
-        blog.comments = await CommentSchema.find({blog: id}).populate('user')
     }
 
+    blog.comments = await CommentSchema.find({blog: id}).populate('user').populate({path: "replies" , populate: [{path: 'user' , model: "user"} , {path: 'blog', model: "blog"}]})
+    
     if (req.isAuthenticated()) {
         var checkUserFollowed = await FollowSchema.findOne({$and: [{follower: req.user.id} , {following: blog.author.id}]})
     }
@@ -147,8 +148,7 @@ router.post("/blogs/comment/:id" , CheckIfUserLoggedIn , async (req , res) => {
     const { id: blogId } = req.params
     let { body } = req.body
     body = sanitizeHtml(body)
-
-    if (!body.trim()) {
+    if (body.trim() == "") {
         req.flash("error" , "Comment can not be empty")
         return res.redirect(400 , req.headers.referer || `/blogs/${blogId}`)
     }
@@ -164,6 +164,58 @@ router.post("/blogs/comment/:id" , CheckIfUserLoggedIn , async (req , res) => {
     res.redirect(req.headers.referer || `/blogs/${blogId}`)
 })
 
+router.post("/blogs/:blogId/comment/:commentId/reply" , CheckIfUserLoggedIn , async (req , res) => {
+    const { blogId , commentId } = req.params
+    let { body } = req.body
+    body = sanitizeHtml(body)
+    console.log(blogId , commentId)
+    if (body.trim() == "") {
+        req.flash("error" , "reply can not be empty")
+        return res.redirect(req.headers.referer || `/blogs/${blogId}`)
+    }
 
+    const reply = await CommentSchema.findOneAndUpdate({$and: [{blog: blogId} , {_id: commentId}]} , {$push: {replies: {user: req.user.id , body: body , blog: blogId}}})
+
+
+    if (!reply) {
+        req.flash("error" , "something went wrong try again")
+        return res.redirect(req.headers.referer || `/blogs/${blogId}`)
+    }
+
+    req.flash("message" , "your reply posted")
+    res.redirect(req.headers.referer || `/blogs/${blogId}`)
+
+
+})
+
+router.post("/blogs/comment/:id/delete" , CheckIfUserLoggedIn , async (req , res) => {
+    const { id: commentId } = req.params
+    let comment = await CommentSchema.findById(commentId)
+    
+    if (!comment) {
+        comment = await CommentSchema.findOne({replies: {$elemMatch: {_id: commentId}}})
+        console.log(commentId , comment)
+        if (!comment) {
+            req.flash("error" , "comment not found")
+            return res.redirect(req.headers.referer || "/")
+        }
+    }
+
+    if (comment.user._id != req.user.id) {
+        req.flash("error" , "Permission Denied")
+        return res.redirect(req.headers.referer || `/blogs/${comment.blog}`)
+    }
+
+    let deletedComment = await CommentSchema.findOneAndDelete({_id: commentId}) 
+    if (!deletedComment) {
+        deletedComment = await CommentSchema.findOneAndUpdate({replies: {$elemMatch: {_id: commentId}}} , {$pull: {replies:{_id: commentId}}})
+        if (!deletedComment) {
+            req.flash("error" , "something went wrong try again")
+            return res.redirect(req.headers.referer || `/blogs/${comment.blog}`)
+        }
+    }
+    req.flash("message" , "comment deleted successfully")
+    res.redirect(req.headers.referer || `/blogs/${comment.blog}`)
+})
 
 module.exports = router
