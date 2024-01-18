@@ -11,7 +11,7 @@ passport.use(new Strategy({passReqToCallback: true} , async (req, username,  pas
         return done(null , false , req.flash("error", "missing credentials"))
     }
     // find user with email or username 
-    const user = await UserSchema.findOne({$or: [{username}, {email: username}]})
+    const user = await UserSchema.findOne({$or: [{username}, {email: username}]}).select("+password")
     // if user not found we can show a message that user can not be found
     if (!user){
         return done(null , false , req.flash("error", "user can not be found"))
