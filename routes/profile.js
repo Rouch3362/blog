@@ -32,7 +32,7 @@ router.get("/writers/:id" , CheckIfUserLoggedIn ,async (req , res) => {
         pageCount: pageCount,
         page: page,
         isAuthenticated: req.isAuthenticated(),
-        user: user,
+        writer: user,
         blogs: userBlogs.slice(page * 10 - 10 , page * 10),
         message: req.flash("message"),
         error: req.flash("error"),
