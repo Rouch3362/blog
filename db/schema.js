@@ -14,10 +14,12 @@ const User = new mongoose.Schema({
     },
     email: {
         type: String,
+        select: false
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        select: false
     },
     profile_picture:{
         type: Object({
@@ -38,7 +40,6 @@ const User = new mongoose.Schema({
 const TwitterUser = new mongoose.Schema({
     twitterId: {
         type: String
-
     },
     username:{
         tpye: String
@@ -110,10 +111,11 @@ const Comment = new mongoose.Schema({
         type: String,
         required: true
     },
-    reply:{
-        type: String,
-    }
+    // replies:[]
 } , {timestamps: true})
+Comment.add({
+    replies: [Comment]
+})
 
 
 const Follow = new mongoose.Schema({
