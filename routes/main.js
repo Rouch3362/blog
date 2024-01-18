@@ -188,17 +188,28 @@ router.post("/blogs/:blogId/comment/:commentId/reply" , CheckIfUserLoggedIn , as
 
 })
 
-router.post("/blogs/comment/:id/delete" , CheckIfUserLoggedIn , async (req , res) => {
-    const { id: commentId } = req.params
+
+const findComment = async (commentId) => {
+    
     let comment = await CommentSchema.findById(commentId)
     
     if (!comment) {
         comment = await CommentSchema.findOne({replies: {$elemMatch: {_id: commentId}}})
-        console.log(commentId , comment)
-        if (!comment) {
-            req.flash("error" , "comment not found")
-            return res.redirect(req.headers.referer || "/")
-        }
+        comment = comment.replies.filter(reply => {return reply._id == commentId })[0]
+    }
+
+    return comment
+}
+
+router.post("/blogs/comment/:id/delete" , CheckIfUserLoggedIn , async (req , res) => {
+    const { id: commentId } = req.params
+    
+    const comment = await findComment(commentId) 
+
+
+    if (!comment) {
+        req.flash("error" , "comment not found")
+        return res.redirect(req.headers.referer || `/blogs/${comment.blog}`)
     }
 
     if (comment.user._id != req.user.id) {
@@ -215,6 +226,32 @@ router.post("/blogs/comment/:id/delete" , CheckIfUserLoggedIn , async (req , res
         }
     }
     req.flash("message" , "comment deleted successfully")
+    res.redirect(req.headers.referer || `/blogs/${comment.blog}`)
+})
+
+
+router.post("/blogs/comment/:id/edit" , CheckIfUserLoggedIn , async (req , res) => {
+    const {id: commentId} = req.params
+    let {body} = req.body
+
+    body = sanitizeHtml(body)
+
+    const comment = await findComment(commentId)
+
+    if (!comment) {
+        req.flash("error" , "comment not found")
+        return res.redirect(req.headers.referer || `/blogs/${comment.blog}`)
+    }
+
+    let updatingComment = await CommentSchema.findOneAndUpdate({_id: commentId} , {body: body} , {new: true}) 
+    if (!updatingComment) {
+        updatingComment = await CommentSchema.findOneAndUpdate({replies: {$elemMatch: {_id: commentId}}} ,{$set: {'replies.$.body': body}} , {new: true})
+        if (!updatingComment) {
+            req.flash("error" , "something went wrong try again")
+            return res.redirect(req.headers.referer || `/blogs/${comment.blog}`)
+        }
+    }
+    req.flash("message" , "comment edited successfully")
     res.redirect(req.headers.referer || `/blogs/${comment.blog}`)
 })
 
