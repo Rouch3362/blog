@@ -36,7 +36,7 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                                 <% } %>
                                 <%= blog.comments[i].user.username %></a>
                             <p class="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime="2022-02-08"
-                                    title="February 8th, 2022"><%= new Date(blog.comments[i].createdAt).getFullYear() %>  <%= months[new Date(blog.comments[i].createdAt).getMonth()] %>  <%= new Date(blog.comments[i].createdAt).getDate() %></time></p>
+                                    title="February 8th, 2022"><%= new Date(blog.comments[i].updatedAt).getFullYear() %>  <%= months[new Date(blog.comments[i].updatedAt).getMonth()] %>  <%= new Date(blog.comments[i].updatedAt).getDate() %> | <%= new Date(blog.comments[i].updatedAt).getHours() %>:<%= new Date(blog.comments[i].updatedAt).getMinutes() %></time></p>
                         </div>
                         <% if (user.id == blog.comments[i].user.id) { %>
                             <div class="flex gap-2 justify-center items-center">
@@ -47,36 +47,27 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                                         <img class="w-5" width="96" height="96" src="https://img.icons8.com/windows/96/FF0F0F/trash.png" alt="trash"/>
                                     </button>
                                 </form>
-                                <button id="dropdownComment2Button" data-dropdown-toggle="dropdownComment2"
+                                <button onclick="editClick(this)" id="dropdownComment2Button" data-dropdown-toggle="dropdownComment2"
                                     class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-green-200 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-green-200 dark:focus:ring-gray-600"
                                     type="submit">
                                     <img class="w-5" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/25EB65/pen-squared.png" alt="pen-squared"/>
                                 </button>
                             </div>
                         <% } %>
-                        <!-- Dropdown menu -->
-                        <div id="dropdownComment1"
-                            class="hidden absolute -right-4 top-16 z-10 w-28 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
-                            <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
-                                aria-labelledby="dropdownMenuIconHorizontalButton">
-                                <li>
-                                    <a href="#"
-                                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Remove</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Report</a>
-                                </li>
-                            </ul>
-                        </div>
                     </footer>
                     <p class="text-gray-500 dark:text-gray-400">
                         <%= blog.comments[i].body %>
                     </p>
+                    <form method="post" action="/blogs/comment/<%=blog.comments[i].id %>/edit" id="editZone" class="py-2 hidden relative px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        <label for="comment" class="sr-only">Your comment</label>
+                        <input name="body" id="comment" rows="6"
+                            class="px-0 w-full resize-none text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+                            placeholder="Edit your comment..." required />
+                        <button type="submit"
+                            class="inline-flex right-5 top-1.5 absolute items-center  text-xs font-medium text-center text-white bg-transparent rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
+                            <img class="w-7" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/15803d/sent--v1.png" alt="sent--v1"/>
+                        </button>
+                    </form>
                     <div class="flex items-center mt-4 space-x-4">
                         <button type="button"
                             onclick="replyClick(this)"
@@ -95,8 +86,8 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                                 placeholder="Write a reply..." required />
                             <button type="submit"
                                 class="inline-flex right-5 top-1.5 absolute items-center  text-xs font-medium text-center text-white bg-transparent rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
-                            <img class="w-7" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/15803d/sent--v1.png" alt="sent--v1"/>
-                        </button>
+                                <img class="w-7" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/15803d/sent--v1.png" alt="sent--v1"/>
+                            </button>
                         </div>
                         
                     </form>
@@ -118,7 +109,7 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                                         <% } %>
                                         <%= blog.comments[i].replies[j].user.username %></a>
                                     <p class="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime="2022-02-08"
-                                            title="February 8th, 2022"><%= new Date(blog.comments[i].replies[j].createdAt).getFullYear() %>  <%= months[new Date(blog.comments[i].replies[j].createdAt).getMonth()] %>  <%= new Date(blog.comments[i].replies[j].createdAt).getDate() %></time></p>
+                                            title="February 8th, 2022"><%= new Date(blog.comments[i].replies[j].updatedAt).getFullYear() %>  <%= months[new Date(blog.comments[i].replies[j].updatedAt).getMonth()] %>  <%= new Date(blog.comments[i].replies[j].updatedAt).getDate() %> | <%= new Date(blog.comments[i].updatedAt).getHours() %>:<%= new Date(blog.comments[i].updatedAt).getMinutes() %></time></p>
                                 </div>
                                 <% if (user.id == blog.comments[i].replies[j].user.id) { %>
                                     <div class="flex gap-2 justify-center items-center">
@@ -129,36 +120,27 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                                                 <img class="w-5" width="96" height="96" src="https://img.icons8.com/windows/96/FF0F0F/trash.png" alt="trash"/>
                                             </button>
                                         </form>
-                                        <button id="dropdownComment2Button" data-dropdown-toggle="dropdownComment2"
+                                        <button onclick="editClick(this)" id="dropdownComment2Button" data-dropdown-toggle="dropdownComment2"
                                             class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-green-200 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-green-200 dark:focus:ring-gray-600"
                                             type="submit">
                                             <img class="w-5" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/25EB65/pen-squared.png" alt="pen-squared"/>
                                         </button>
                                     </div>
                                 <% } %>
-                                <!-- dropdown -->
-                                <div id="dropdownComment1"
-                                    class="hidden absolute -right-4 top-16 z-10 w-28 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
-                                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
-                                        aria-labelledby="dropdownMenuIconHorizontalButton">
-                                        <li>
-                                            <a href="#"
-                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Remove</a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Report</a>
-                                        </li>
-                                    </ul>
-                                </div>
                             </footer>
-                            <p class="text-gray-500 dark:text-gray-400">
+                            <p id="replyContent" class="text-gray-500 dark:text-gray-400">
                                 <%= blog.comments[i].replies[j].body %>
                             </p>
+                            <form method="post" action="/blogs/comment/<%=blog.comments[i].replies[j].id %>/edit" id="editZone" class="py-2 hidden relative px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                                <label for="comment" class="sr-only">Your comment</label>
+                                <input name="body" id="comment" rows="6"
+                                    class="px-0 w-full resize-none text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+                                    placeholder="Edit your reply..." required />
+                                <button type="submit"
+                                    class="inline-flex right-5 top-1.5 absolute items-center  text-xs font-medium text-center text-white bg-transparent rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
+                                    <img class="w-7" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/15803d/sent--v1.png" alt="sent--v1"/>
+                                </button>
+                            </form>
                             <div class="flex items-center mt-4 space-x-4">
                                 <button type="button"
                                     class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium" id="reply-button">
@@ -200,4 +182,22 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
         
     }
     
+    const editClick = (e) => {
+        
+        let replyText = e.parentNode.parentNode.nextSibling.nextSibling
+        let editParent = e.parentNode.parentNode.nextSibling.nextSibling.nextSibling.nextSibling
+        let editInput = e.parentNode.parentNode.nextSibling.nextSibling.nextSibling.nextSibling.children[1]
+              
+        
+        replyText.classList.toggle("hidden")
+        editInput.value = replyText.textContent.trim()
+        editParent.classList.toggle("hidden")
+        if (replyText.classList.contains("hidden")) {
+            e.children[0].src = "https://img.icons8.com/color/96/delete-sign--v1.png"
+        }
+        else {
+            e.children[0].src = "https://img.icons8.com/fluency-systems-regular/96/25EB65/pen-squared.png"
+        }
+    }
+
   </script>
