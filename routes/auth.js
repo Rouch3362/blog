@@ -4,7 +4,6 @@ const { UserSchema } = require("../db/schema")
 const { HashPassword , ValidateEmail, CheckIfUserLoggedIn , PreventLoggingInAgain } = require("../helpers/authHelper")
 const passport = require("passport")
 const sanitizeHtml = require("sanitize-html")
-const { toBinary , upload } = require("../helpers/imageToBinary")
 
 
 
@@ -16,31 +15,34 @@ router.route("/register")
     isAuthenticated: req.isAuthenticated()
 })
 })
-.post(upload.single("profile") , async (req , res) => {
-    let {name , username , email , profile} = req.body
+.post(async (req , res) => {
+    let {name , username , email } = req.body
     name = sanitizeHtml(name)
     username = sanitizeHtml(username)
     email = sanitizeHtml(email)
+    
     const userExist = await UserSchema.findOne({$or: [{email} , {username}]})
+
     if (!name || !username || !email || !req.body.password) {
         req.flash("error" , "missing credentials")
         return res.status(400).redirect("/auth/register")
     }
+
     if (userExist) {
         req.flash("error" , "user already exists")
         return res.status(400).redirect("/auth/register")
     }
+
     const password = HashPassword(req.body.password)
+
     if (!ValidateEmail(email)){
         req.flash("error" , "email is not valid")
         return res.status(400).redirect("/auth/register")
     }
 
-    if(req.file){
-        profile = toBinary(req)
-    }
 
-    const user = await UserSchema.create({name , username , email , password , profile_picture: profile})
+    const user = await UserSchema.create({name , username , email , password})
+
     req.login(user , (err) => {
         if (err){
             req.flash("error" , "can not login automaticly")
@@ -50,6 +52,8 @@ router.route("/register")
         return res.redirect("/profile")
     })
     
+    
+
 })
 
 
