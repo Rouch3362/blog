@@ -4,7 +4,8 @@ const { isValidObjectId } = require("mongoose")
 const { CheckIfUserLoggedIn } = require("../helpers/authHelper")
 const sanitize = require("sanitize-html")
 const router = Router()
-const { toBinary , upload } = require("../helpers/imageToBinary")
+const fs = require('fs')
+const { upload } = require("../helpers/imageUploader")
 
 router.get("/writers/:id" , CheckIfUserLoggedIn ,async (req , res) => {
     const {id} = req.params
@@ -94,10 +95,14 @@ router.route("/profile" , CheckIfUserLoggedIn)
     email = sanitize(email)
     name = sanitize(name)
     if (req.file) {
-        profile = toBinary(req)
+        profile = "../" + req.file.path
     }
-    const updatedUser = await UserSchema.findByIdAndUpdate(req.user.id , {name , username , email , profile_picture: profile})
-    if (!updatedUser) {
+    const user = await UserSchema.findByIdAndUpdate(req.user.id , {name , username , email , profile_picture: profile})
+    // delete previous profile picture
+    if (user.profile_picture !== "./uploads/noprofile.png" && !user.profile_picture.includes("https")) {
+        fs.unlinkSync(user.profile_picture.replace("../" , ""))
+    }
+    if (!user) {
         req.flash("error" , "something went wrong try again")
         return res.redirect('/profile')
     }
