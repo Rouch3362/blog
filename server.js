@@ -23,6 +23,7 @@ app.use(bodyParser.json())
 const connectMongo = require("connect-mongo")
 const session = require("express-session")
 app.use(session({
+    cookie: { maxAge: 60000 * 60 * 24 }, // one day
     secret: 'amirali3362',
     resave: false,
     saveUninitialized: false,
