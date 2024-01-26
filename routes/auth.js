@@ -23,7 +23,6 @@ router.route("/register")
     email = sanitizeHtml(email)
     const userExist = await UserSchema.findOne({$or: [{email} , {username}]})
     if (!name || !username || !email || !req.body.password) {
-        console.log("error");
         req.flash("error" , "missing credentials")
         return res.status(400).redirect("/auth/register")
     }
@@ -48,7 +47,7 @@ router.route("/register")
             return res.redirect("/auth/login")
         }
         req.flash("message" , "created account and logged in successfully")
-        return res.redirect(req.headers.referer || "/")
+        return res.redirect("/profile")
     })
     
 })
