@@ -14,7 +14,7 @@ passport.use(new Strategy({
     if (!user){
       user = await TwitterUser.create({username: profile.username , twitterId: profile.id , name: profile.displayName , profile_picture: profile.photos[0].value})
     }
-    console.log(user)
+    
     done(null , user)
 
   }));
