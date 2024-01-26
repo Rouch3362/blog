@@ -26,14 +26,10 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                     <footer class="flex justify-between items-center mb-2">
                         <div class="flex items-center">
                             <a href="/writers/<%= blog.comments[i].user.id %>" class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
-                                <% if (blog.comments[i].user.profile_picture) { %>
-                                    <img
-                                    class="mr-2 rounded-full w-8 object-cover"
+                                <img
+                                    class="mr-2 aspect-square rounded-full w-8 object-cover"
                                     src="data:image/<%= blog.comments[i].user.profile_picture.contentType%>;base64,<%= blog.comments[i].user.profile_picture.data.toString('base64') %>"
                                     alt="profile picture">
-                                <% } else { %>
-                                    <img class="mr-2 rounded-full w-8 object-cover" width="96" height="96" src="https://img.icons8.com/parakeet-line/96/000000/test-account.png" alt="test-account"/>
-                                <% } %>
                                 <%= blog.comments[i].user.username %></a>
                             <p class="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime="2022-02-08"
                                     title="February 8th, 2022"><%= new Date(blog.comments[i].updatedAt).getFullYear() %>  <%= months[new Date(blog.comments[i].updatedAt).getMonth()] %>  <%= new Date(blog.comments[i].updatedAt).getDate() %> | <%= new Date(blog.comments[i].updatedAt).getHours() %>:<%= new Date(blog.comments[i].updatedAt).getMinutes() %></time></p>
@@ -99,14 +95,10 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                             <footer class="flex justify-between items-center mb-2">
                                 <div class="flex items-center">
                                     <a href="/writers/<%= blog.comments[i].user.id %>" class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
-                                        <% if (blog.comments[i].replies[j].user.profile_picture) { %>
                                             <img
-                                            class="mr-2 rounded-full w-8 object-cover"
+                                            class="mr-2 rounded-full aspect-square w-8 object-cover"
                                             src="data:image/<%= blog.comments[i].replies[j].user.profile_picture.contentType%>;base64,<%= blog.comments[i].replies[j].user.profile_picture.data.toString('base64') %>"
                                             alt="profile picture">
-                                        <% } else { %>
-                                            <img class="mr-2 rounded-full w-8 object-cover" width="96" height="96" src="https://img.icons8.com/parakeet-line/96/000000/test-account.png" alt="test-account"/>
-                                        <% } %>
                                         <%= blog.comments[i].replies[j].user.username %></a>
                                     <p class="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime="2022-02-08"
                                             title="February 8th, 2022"><%= new Date(blog.comments[i].replies[j].updatedAt).getFullYear() %>  <%= months[new Date(blog.comments[i].replies[j].updatedAt).getMonth()] %>  <%= new Date(blog.comments[i].replies[j].updatedAt).getDate() %> | <%= new Date(blog.comments[i].updatedAt).getHours() %>:<%= new Date(blog.comments[i].updatedAt).getMinutes() %></time></p>
