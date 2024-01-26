@@ -40,9 +40,8 @@ router.route("/post")
 .post(upload.single('thumbnail') , async (req , res) => {
     let { body , title , preview , thumbnail , tags } = req.body
     tags = sanitizeHtml(tags)
-    body = sanitizeHtml(body)
     title = sanitizeHtml(title)
-    previw = sanitizeHtml(preview)
+    preview = sanitizeHtml(preview)
     tags = tags.split(",")
     if (req.file) {
         thumbnail = toBinary(req)
@@ -54,13 +53,18 @@ router.route("/post")
         return res.redirect("/post")
     }
 
+    if (!preview) {
+        req.flash("error" , "if you want to write code write it in a code block")
+        return res.redirect("/post")
+    }
+
     // save the blog to database
     const blog = await BlogSchema.create({author: req.user.id , title , body , preview , thumbnail , tags})
     
     if (blog){
         req.flash("message" , "congrats!! your blog posted successfully")
     
-        res.redirect(req.headers.referer || `/blogs/${blog.id}`)
+        res.redirect(`/blogs/${blog.id}`)
     }
     else{
         req.flash("error" , "something went wrong try again")
