@@ -1,7 +1,7 @@
 const { Router } = require("express")
 const { CheckIfUserLoggedIn } = require("../helpers/authHelper")
 const { BlogSchema, LikeSchema, FollowSchema, CommentSchema } = require("../db/schema")
-const { toBinary , upload} = require("../helpers/imageToBinary")
+const { toBinary , upload} = require("../helpers/imageUploader")
 const { Types , isValidObjectId } = require("mongoose")
 const sanitizeHtml = require("sanitize-html")
 const router = Router()
