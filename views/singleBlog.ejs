@@ -315,7 +315,7 @@ function calculateReadingTime(text){
         <% } %>
     </div>
     <div class="float-left flex gap-4 items-center">
-        <img class="object-cover w-16 rounded-full aspect-square" src="data:image/<%= blog.author.profile_picture.contentType%>;base64,<%= blog.author.profile_picture.data.toString('base64') %>" alt="">
+        <img class="object-cover w-16 rounded-full aspect-square" src="<%= blog.author.profile_picture %>" alt="">
         <div>
             <div class="flex flex-col justify">
                 <a href="/writers/<%=blog.author.id%>" class="capitalize font-semibold"><%= blog.author.name %></a>

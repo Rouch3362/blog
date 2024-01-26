@@ -8,8 +8,8 @@
     <% } %>
     <div  class="flex flex-col details">
             <a href="/writers/<%= blogs[i].author.id %>" class="font-semibold flex flex-row items-center gap-1.5">
-                <img class="w-8 rounded-full object-cover aspect-square" src="data:image/<%=blogs[i].author.profile_picture.contentType%>;base64,<%= blogs[i].author.profile_picture.data.toString('base64') %>" alt="">
-
+                <img class="w-8 rounded-full object-cover aspect-square" src="<%= blogs[i].author.profile_picture %>" alt="">
+               
                 <p class="hover:underline hover:text-gray-500"><%= blogs[i].author.username %></p>
             </a>
             <a href="/blogs/<%=blogs[i].id%>">

@@ -1,7 +1,7 @@
 <%- include('header') %>
 <%- console.log(writer) %>
 <section class="flex flex-col justify-center items-center py-10 px-14">
-    <img class="w-24 object-cover rounded-full aspect-square" src="data:image/<%=writer.profile_picture.contenType%>;base64,<%=writer.profile_picture.data.toString('base64')%>" alt="">
+    <img class="w-24 object-cover rounded-full aspect-square" src="../<%= writer.profile_picture %>" alt="">
     <h1  class="text-2xl font-semibold"><%= writer.username %></h1>
     <h2 class="text-md font-semibold capitalize text-gray-500 mt-2"><%= writer.name %></h2>
     <div class="flex justify-center items-center gap-10 my-5">

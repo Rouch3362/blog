@@ -6,7 +6,7 @@
     <h1 class="text-xl font-semibold">Edit Your Information</h1>
     <div>
         <label for="profile" class="flex flex-row gap-5 justify-center items-center">
-            <img id="image" class="rounded-full aspect-square object-cover w-24" src="data:image/<%=user.profile_picture.contentType%>;base64,<%=user.profile_picture.data.toString('base64')%>" alt="image--v1"/>
+            <img id="image" class="rounded-full aspect-square object-cover w-24" src="<%= user.profile_picture %>" />
         </label>
         <input onchange="showPreview()" accept="image/*" type="file" class="hidden" name="profile" id="profile">
     </div>
