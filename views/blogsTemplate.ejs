@@ -3,8 +3,7 @@
         
     
     <% if(blogs[i].thumbnail != null) { %>
-        <img class="w-[200px] img h-[150px] object-cover" src="data:image/<%=blogs[i].thumbnail.contentType%>;base64,
-        <%= blogs[i].thumbnail.data.toString('base64') %>"/>
+        <img class="w-[200px] img h-[150px] object-cover" src="<%=blogs[i].thumbnail%>"/>
     <% } %>
     <div  class="flex flex-col details">
             <a href="/writers/<%= blogs[i].author.id %>" class="font-semibold flex flex-row items-center gap-1.5">

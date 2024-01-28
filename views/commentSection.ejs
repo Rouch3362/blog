@@ -28,27 +28,29 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                             <a href="/writers/<%= blog.comments[i].user.id %>" class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
                                 <img
                                     class="mr-2 aspect-square rounded-full w-8 object-cover"
-                                    src="../<%= blog.comments[i].user.profile_picture %>"
+                                    src="<%= blog.comments[i].user.profile_picture %>"
                                     alt="profile picture">
                                 <%= blog.comments[i].user.username %></a>
                             <p class="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime="2022-02-08"
-                                    title="February 8th, 2022"><%= new Date(blog.comments[i].updatedAt).getFullYear() %>  <%= months[new Date(blog.comments[i].updatedAt).getMonth()] %>  <%= new Date(blog.comments[i].updatedAt).getDate() %> | <%= new Date(blog.comments[i].updatedAt).getHours() %>:<%= new Date(blog.comments[i].updatedAt).getMinutes() %></time></p>
+                                    title="February 8th, 2022"><%= new Date(blog.comments[i].createdAt).getFullYear() %>  <%= months[new Date(blog.comments[i].createdAt).getMonth()] %>  <%= new Date(blog.comments[i].createdAt).getDate() %> | <%= new Date(blog.comments[i].createdAt).getHours() %>:<%= new Date(blog.comments[i].createdAt).getMinutes() %></time></p>
                         </div>
-                        <% if (user.id == blog.comments[i].user.id) { %>
-                            <div class="flex gap-2 justify-center items-center">
-                                <form method="post" action="/blogs/comment/<%= blog.comments[i].id %>/delete">
-                                    <button id="dropdownComment1Button" data-dropdown-toggle="dropdownComment1"
-                                        class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-red-200 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-red-200 dark:focus:ring-gray-600"
+                        <% if (isAuthenticated) { %>
+                            <% if (user.id == blog.comments[i].user.id) { %>
+                                <div class="flex gap-2 justify-center items-center">
+                                    <form method="post" action="/blogs/comment/<%= blog.comments[i].id %>/delete">
+                                        <button id="dropdownComment1Button" data-dropdown-toggle="dropdownComment1"
+                                            class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-red-200 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-red-200 dark:focus:ring-gray-600"
+                                            type="submit">
+                                            <img class="w-5" width="96" height="96" src="https://img.icons8.com/windows/96/FF0F0F/trash.png" alt="trash"/>
+                                        </button>
+                                    </form>
+                                    <button onclick="editClick(this)" id="dropdownComment2Button" data-dropdown-toggle="dropdownComment2"
+                                        class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-green-200 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-green-200 dark:focus:ring-gray-600"
                                         type="submit">
-                                        <img class="w-5" width="96" height="96" src="https://img.icons8.com/windows/96/FF0F0F/trash.png" alt="trash"/>
+                                        <img class="w-5" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/25EB65/pen-squared.png" alt="pen-squared"/>
                                     </button>
-                                </form>
-                                <button onclick="editClick(this)" id="dropdownComment2Button" data-dropdown-toggle="dropdownComment2"
-                                    class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-green-200 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-green-200 dark:focus:ring-gray-600"
-                                    type="submit">
-                                    <img class="w-5" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/25EB65/pen-squared.png" alt="pen-squared"/>
-                                </button>
-                            </div>
+                                </div>
+                            <% } %>
                         <% } %>
                     </footer>
                     <p class="text-gray-500 dark:text-gray-400">
@@ -97,27 +99,29 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                                     <a href="/writers/<%= blog.comments[i].user.id %>" class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
                                             <img
                                             class="mr-2 rounded-full aspect-square w-8 object-cover"
-                                            src="../<%= blog.comments[i].replies[j].user.profile_picture %>"
+                                            src="<%= blog.comments[i].replies[j].user.profile_picture %>"
                                             alt="profile picture">
                                         <%= blog.comments[i].replies[j].user.username %></a>
                                     <p class="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime="2022-02-08"
-                                            title="February 8th, 2022"><%= new Date(blog.comments[i].replies[j].updatedAt).getFullYear() %>  <%= months[new Date(blog.comments[i].replies[j].updatedAt).getMonth()] %>  <%= new Date(blog.comments[i].replies[j].updatedAt).getDate() %> | <%= new Date(blog.comments[i].updatedAt).getHours() %>:<%= new Date(blog.comments[i].updatedAt).getMinutes() %></time></p>
+                                            title="February 8th, 2022"><%= new Date(blog.comments[i].replies[j].updatedAt).getFullYear() %>  <%= months[new Date(blog.comments[i].replies[j].updatedAt).getMonth()] %>  <%= new Date(blog.comments[i].replies[j].updatedAt).getDate() %> | <%= new Date(blog.comments[i].replies[j].updatedAt).getHours() %>:<%= new Date(blog.comments[i].replies[j].updatedAt).getMinutes() %></time></p>
                                 </div>
-                                <% if (user.id == blog.comments[i].replies[j].user.id) { %>
-                                    <div class="flex gap-2 justify-center items-center">
-                                        <form method="post" action="/blogs/comment/<%= blog.comments[i].replies[j].id %>/delete">
-                                            <button id="dropdownComment1Button" data-dropdown-toggle="dropdownComment1"
-                                                class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-red-200 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-red-200 dark:focus:ring-gray-600"
+                                <% if (isAuthenticated) { %>
+                                    <% if (user.id == blog.comments[i].replies[j].user.id) { %>
+                                        <div class="flex gap-2 justify-center items-center">
+                                            <form method="post" action="/blogs/comment/<%= blog.comments[i].replies[j].id %>/delete">
+                                                <button id="dropdownComment1Button" data-dropdown-toggle="dropdownComment1"
+                                                    class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-red-200 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-red-200 dark:focus:ring-gray-600"
+                                                    type="submit">
+                                                    <img class="w-5" width="96" height="96" src="https://img.icons8.com/windows/96/FF0F0F/trash.png" alt="trash"/>
+                                                </button>
+                                            </form>
+                                            <button onclick="editClick(this)" id="dropdownComment2Button" data-dropdown-toggle="dropdownComment2"
+                                                class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-green-200 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-green-200 dark:focus:ring-gray-600"
                                                 type="submit">
-                                                <img class="w-5" width="96" height="96" src="https://img.icons8.com/windows/96/FF0F0F/trash.png" alt="trash"/>
+                                                <img class="w-5" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/25EB65/pen-squared.png" alt="pen-squared"/>
                                             </button>
-                                        </form>
-                                        <button onclick="editClick(this)" id="dropdownComment2Button" data-dropdown-toggle="dropdownComment2"
-                                            class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-green-200 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-green-200 dark:focus:ring-gray-600"
-                                            type="submit">
-                                            <img class="w-5" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/25EB65/pen-squared.png" alt="pen-squared"/>
-                                        </button>
-                                    </div>
+                                        </div>
+                                    <% } %>
                                 <% } %>
                             </footer>
                             <p id="replyContent" class="text-gray-500 dark:text-gray-400">

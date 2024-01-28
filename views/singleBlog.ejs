@@ -329,6 +329,7 @@ function calculateReadingTime(text){
                     </form>
                 <% } %>
             </div>
+            
             <div class="flex gap-2 text-sm text-gray-500">
                 <p><%= calculateReadingTime(blog.body) %></p>
                 .
@@ -345,14 +346,17 @@ function calculateReadingTime(text){
                 <% } else { %>
                     <img class="w-7 cursor-pointer" width="48" height="48" src="https://img.icons8.com/material-outlined/48/facebook-like--v1.png" alt="facebook-like--v1"/>
                 <% } %>
-                <d class="text-md font-semibold"><%= blog.likeCount %></p>
+                <p class="text-md font-semibold"><%= blog.likeCount %></p>
                </button>
             </form>
-            <a href="#comment-section"><img class="w-7 cursor-pointer" width="64" height="64" src="https://img.icons8.com/windows/64/speech-bubble--v1.png" alt="speech-bubble--v1"/></a>
+            <a href="#comment-section" class="flex flex-col justify-center items-center">
+                <img class="w-7 cursor-pointer" width="64" height="64" src="https://img.icons8.com/windows/64/speech-bubble--v1.png" alt="speech-bubble--v1"/>
+                <p class="text-md font-semibold"><%= blog.comments.length%></p>
+            </a>
             <img class="w-7 cursor-pointer" width="48" height="48"  src="https://img.icons8.com/fluency-systems-regular/48/bookmark-ribbon--v1.png" alt="bookmark-ribbon--v1"/>
         </div>
     <% } %>
-    
+    <img src="<%=blog.thumbnail%>" />
     <div class="ql-editor border-b-2 pb-8"><%- blog.body %></div>
     <% if (blog.tags.length > 1) { %>
         <div class="flex gap-3 font-semibold">
