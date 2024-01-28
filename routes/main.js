@@ -1,11 +1,11 @@
 const { Router } = require("express")
 const { CheckIfUserLoggedIn } = require("../helpers/authHelper")
 const { BlogSchema, LikeSchema, FollowSchema, CommentSchema } = require("../db/schema")
-const { toBinary , upload} = require("../helpers/imageUploader")
-const { Types , isValidObjectId } = require("mongoose")
+const { upload } = require("../helpers/imageUploader")
+const  { isValidObjectId } = require("mongoose")
 const sanitizeHtml = require("sanitize-html")
 const router = Router()
-
+const fs = require("fs")
 
 router.get("/" , async (req , res) => {
     const blogs = await BlogSchema.find({}).sort({_id: -1}).populate("author")
@@ -44,7 +44,7 @@ router.route("/post")
     preview = sanitizeHtml(preview)
     tags = tags.split(",")
     if (req.file) {
-        thumbnail = toBinary(req)
+        thumbnail = "../"+req.file.path
     }
 
     // if body or title is empty user can not save the blog
@@ -138,12 +138,15 @@ router.post('/blogs/delete/:id' , CheckIfUserLoggedIn , async (req , res) => {
         return res.redirect(403 , req.headers.referer || `/blogs/${blogId}`)
     }
     
-    const deletedBlog = await BlogSchema.deleteOne({_id: blogId})
+    const deletedBlog = await BlogSchema.findOneAndDelete({_id: blogId})
 
     if (!deletedBlog) {
         req.flash("error" , "something went wrong try again")
         return res.redirect(req.headers.referer || `/blogs/${blogId}`)
     }
+
+    fs.unlinkSync(deletedBlog.thumbnail.replace("../" , ""))
+
     req.flash("message" , `"${blog.title}" blog deleted successfully`)
     res.redirect('/')
 })
