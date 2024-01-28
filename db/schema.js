@@ -2,7 +2,6 @@ const { SchemaTypes } = require("mongoose")
 const mongoose = require("mongoose")
 
 
-
 // declare User schema for database
 const User = new mongoose.Schema({
     name: {
@@ -23,7 +22,7 @@ const User = new mongoose.Schema({
     },
     profile_picture:{
         type: String,
-        default: './uploads/noprofile.png'
+        default: '../uploads/noprofile.png'
     },
     about:{
         type: String
@@ -69,10 +68,7 @@ const Blog = new mongoose.Schema({
         required: true
     },
     thumbnail: {
-        type: Object({
-            data: Buffer,
-            contentType: String,
-        }),
+        type: String,
         default: null
     },
     tags: {
@@ -130,7 +126,7 @@ const Follow = new mongoose.Schema({
 })
 
 
-User.pre('deleteOne' , async function (next) {
+User.pre('findOneAndDelete' , async function (next) {
     const userId = this._conditions._id
     await mongoose.model("blog").deleteMany({author: userId})
     await mongoose.model("like").deleteMany({user: userId})
@@ -139,9 +135,8 @@ User.pre('deleteOne' , async function (next) {
     next()
 })
 
-Blog.pre('deleteOne' , async function (next) {
+Blog.pre('findOneAndDelete' , async function (next) {
     const blogId = this._conditions._id
-    console.log(blogId)
     await mongoose.model("comment").deleteMany({blog: blogId})
     await mongoose.model("like").deleteMany({blog: blogId})
     next()
