@@ -8,10 +8,17 @@ const router = Router()
 const fs = require("fs")
 
 router.get("/" , async (req , res) => {
-    const blogs = await BlogSchema.find({}).sort({_id: -1}).populate("author")
-    const pageCount = Math.ceil(blogs.length / 10);
+    const pageCount = Math.ceil(await BlogSchema.countDocuments() / 10);
+    
     let page = parseInt(req.query.page);
+
     if (!page) { page = 1;}
+
+    const blogsPerPage = 10
+
+    // only collect the desired data on a single page not all documents for one page it speeds up the app.
+    const blogs = await BlogSchema.find({}).sort({createdAt: -1}).populate("author").skip(page*blogsPerPage - 10).limit(blogsPerPage)
+
     if (page > pageCount) {
         page = pageCount
     }
@@ -21,7 +28,7 @@ router.get("/" , async (req , res) => {
     res.render("home" , {
         page: page,
         pageCount: pageCount,
-        blogs: blogs.slice(page * 10 - 10 , page * 10),
+        blogs: blogs,
         message: req.flash("message") , 
         error: req.flash("error") , 
         isAuthenticated: req.isAuthenticated()
@@ -145,7 +152,9 @@ router.post('/blogs/delete/:id' , CheckIfUserLoggedIn , async (req , res) => {
         return res.redirect(req.headers.referer || `/blogs/${blogId}`)
     }
 
-    fs.unlinkSync(deletedBlog.thumbnail.replace("../" , ""))
+    if (deletedBlog.thumbnail) {
+        fs.unlinkSync(deletedBlog.thumbnail.replace("../" , ""))
+    }
 
     req.flash("message" , `"${blog.title}" blog deleted successfully`)
     res.redirect('/')
@@ -175,7 +184,8 @@ router.post("/blogs/:blogId/comment/:commentId/reply" , CheckIfUserLoggedIn , as
     const { blogId , commentId } = req.params
     let { body } = req.body
     body = sanitizeHtml(body)
-    console.log(blogId , commentId)
+
+    
     if (body.trim() == "") {
         req.flash("error" , "reply can not be empty")
         return res.redirect(req.headers.referer || `/blogs/${blogId}`)
