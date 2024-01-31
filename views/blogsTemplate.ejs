@@ -2,17 +2,18 @@
     <article class="cursor-pointer artic relative border-b-2 py-8 w-[680px] my-4 mx-auto grid items-center gap-5 px-3">
         
     
+
     <% if(blogs[i].thumbnail != null) { %>
         <img class="w-[200px] img h-[150px] object-cover" src="<%=blogs[i].thumbnail%>"/>
     <% } %>
     <div  class="flex flex-col details">
-            <a href="/writers/<%= blogs[i].author.id %>" class="font-semibold flex flex-row items-center gap-1.5">
+            <a href="/writers/<%= blogs[i].author.username %>" class="font-semibold flex flex-row items-center gap-1.5">
                 <img class="w-8 rounded-full object-cover aspect-square" src="<%= blogs[i].author.profile_picture %>" alt="">
                
                 <p class="hover:underline hover:text-gray-500"><%= blogs[i].author.username %></p>
             </a>
             <a href="/blogs/<%=blogs[i].id%>">
-                <p class="text-[24px] font-semibold mt-2"><%= blogs[i].title %></p>
+                <p class="text-[24px] font-semibold mt-2 line-clamp-1"><%= blogs[i].title %></p>
                 <div class="line-clamp-3 mt-1.5"><%- blogs[i].preview %></div>
             </a>
     </div>
