@@ -25,7 +25,7 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                 <article  class="p-6 relative text-base bg-white rounded-lg dark:bg-gray-900">
                     <footer class="flex justify-between items-center mb-2">
                         <div class="flex items-center">
-                            <a href="/writers/<%= blog.comments[i].user.id %>" class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
+                            <a href="/writers/<%= blog.comments[i].user.username %>" class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
                                 <img
                                     class="mr-2 aspect-square rounded-full w-8 object-cover"
                                     src="<%= blog.comments[i].user.profile_picture %>"
@@ -96,7 +96,7 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                         <article class="p-6 ml-20 relative text-base bg-white rounded-lg dark:bg-gray-900">
                             <footer class="flex justify-between items-center mb-2">
                                 <div class="flex items-center">
-                                    <a href="/writers/<%= blog.comments[i].user.id %>" class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
+                                    <a href="/writers/<%= blog.comments[i].user.username %>" class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
                                             <img
                                             class="mr-2 rounded-full aspect-square w-8 object-cover"
                                             src="<%= blog.comments[i].replies[j].user.profile_picture %>"
@@ -136,30 +136,7 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept'
                                     class="inline-flex right-5 top-1.5 absolute items-center  text-xs font-medium text-center text-white bg-transparent rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
                                     <img class="w-7" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/15803d/sent--v1.png" alt="sent--v1"/>
                                 </button>
-                            </form>
-                            <div class="flex items-center mt-4 space-x-4">
-                                <button type="button"
-                                    class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium" id="reply-button">
-                                    <svg class="mr-1.5 w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"/>
-                                    </svg>
-                                    Reply
-                                </button>
-                            </div>
-                            <form action="/blogs/<%= blog.id %>/comment/<%=blog.comments[i].id %>/reply" method="post" class="hidden mb-6">
-                                <div class="py-2 relative px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-                                    <label for="comment" class="sr-only">Your comment</label>
-                                    <input name="body" id="comment" rows="6"
-                                        class="px-0 w-full resize-none text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
-                                        placeholder="Write a reply..." required />
-                                    <button type="submit"
-                                        class="inline-flex right-5 top-1.5 absolute items-center  text-xs font-medium text-center text-white bg-transparent rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
-                                    <img class="w-7" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/15803d/sent--v1.png" alt="sent--v1"/>
-                                </button>
-                                </div>
-                                
-                            </form>
-                            
+                            </form>   
                         </article>    
                     <% } %>
                 </div>
