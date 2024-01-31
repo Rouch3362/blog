@@ -1,35 +1,38 @@
 const {Router} = require("express")
 const { UserSchema, BlogSchema, FollowSchema } = require("../db/schema")
 const { isValidObjectId } = require("mongoose")
-const { CheckIfUserLoggedIn } = require("../helpers/authHelper")
+const { CheckIfUserLoggedIn, ValidateEmail } = require("../helpers/authHelper")
 const sanitize = require("sanitize-html")
 const router = Router()
 const fs = require('fs')
 const { upload } = require("../helpers/imageUploader")
 
-router.get("/writers/:id" , CheckIfUserLoggedIn ,async (req , res) => {
-    const {id} = req.params
-    
-    if(!isValidObjectId(id)){
-        return res.status(400).send("invalid params")
-    }
-    const user = await UserSchema.findById(id)
+router.get("/writers/:username" , CheckIfUserLoggedIn ,async (req , res) => {
+    const {username} = req.params
+
+    const user = await UserSchema.findOne({username})
 
     if(!user){
         return res.sendStatus(404)
     }
 
     // user.followers
-    const userBlogs = await BlogSchema.find({author: user.id}).populate("author")
 
-    const checkUserFollowed = await FollowSchema.findOne({$and: [{follower: req.user.id} , {following: id}]})
+    const checkUserFollowed = await FollowSchema.findOne({$and: [{follower: req.user.id} , {following: user.id}]})
     
-    const followers = (await FollowSchema.find({following: id})).length
-    const followings = (await FollowSchema.find({follower: id})).length
+    const followers = await FollowSchema.countDocuments({following: user.id})
+    const followings = await FollowSchema.countDocuments({follower: user.id})
     
-    const pageCount = Math.ceil(userBlogs.length / 10);
+    const pageCount = Math.ceil(await BlogSchema.countDocuments({author: user.id}) / 10);
+
     let page = parseInt(req.query.page);
+
     if (!page) { page = 1;}
+
+    const blogsPerPage = 10
+
+    const userBlogs = await BlogSchema.find({author: user.id}).sort({createdAt: -1}).populate("author").skip(page * blogsPerPage - 10).limit(blogsPerPage)
+
     if (page > pageCount) {
         page = pageCount
     }
@@ -38,7 +41,7 @@ router.get("/writers/:id" , CheckIfUserLoggedIn ,async (req , res) => {
         page: page,
         isAuthenticated: req.isAuthenticated(),
         writer: user,
-        blogs: userBlogs.slice(page * 10 - 10 , page * 10),
+        blogs: userBlogs,
         message: req.flash("message"),
         error: req.flash("error"),
         isFollowing: checkUserFollowed ? true : false,
@@ -94,12 +97,20 @@ router.route("/profile" , CheckIfUserLoggedIn)
     username = sanitize(username)
     email = sanitize(email)
     name = sanitize(name)
+
+
+    if (!ValidateEmail(email)) {
+        req.flash("error" , "email address is invalid please enter a valid one")
+        return res.redirect("/profile")
+    }
+
+
     if (req.file) {
         profile = "../" + req.file.path
     }
     const user = await UserSchema.findByIdAndUpdate(req.user.id , {name , username , email , profile_picture: profile})
     // delete previous profile picture
-    if (user.profile_picture !== "../uploads/noprofile.png" && !user.profile_picture.includes("https")) {
+    if (req.file && user.profile_picture !== "../uploads/noprofile.png" && !user.profile_picture.includes("https")) {
         fs.unlinkSync(user.profile_picture.replace("../" , ""))
     }
     if (!user) {
