@@ -126,6 +126,24 @@ const Follow = new mongoose.Schema({
 })
 
 
+const token = new mongoose.Schema({
+    user: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "user",
+        required: true
+    },
+    token: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now(),
+        expires: 3600
+    }
+})
+
+
 User.pre('findOneAndDelete' , async function (next) {
     const userId = this._conditions._id
     await mongoose.model("blog").deleteMany({author: userId})
@@ -148,5 +166,6 @@ module.exports = {
     LikeSchema: mongoose.model("like" , Like),
     CommentSchema: mongoose.model("comment" , Comment),
     TwitterUser: mongoose.model("twitterUser" , TwitterUser , "users"),
-    FollowSchema: mongoose.model("follow" , Follow)
+    FollowSchema: mongoose.model("follow" , Follow),
+    TokenSchema: mongoose.model("token" , token)
 }
