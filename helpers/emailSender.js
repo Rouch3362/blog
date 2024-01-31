@@ -22,12 +22,10 @@ const sendEmail = (email , subject , htmlMessage) => {
 
     transporter.sendMail(info , (err) => {
         if (err) {
-            console.log(err)
-            return "an error occured" 
+            return false
         }
-        
-        return "email sent"
     })
+    return true
 }
 
 
