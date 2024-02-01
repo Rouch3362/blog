@@ -6,10 +6,12 @@ const mongoose = require("mongoose")
 const User = new mongoose.Schema({
     name: {
         type: String,
+        maxlength: 128,
     },
     username: {
         type: String,
-        required: true
+        required: true,
+        maxlength: 32,
     },
     email: {
         type: String,
@@ -25,7 +27,8 @@ const User = new mongoose.Schema({
         default: '../uploads/noprofile.png'
     },
     about:{
-        type: String
+        type: String,
+        maxlength: 255,
     }
 } , {timestamps: true})
 
