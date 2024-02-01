@@ -1,7 +1,7 @@
 const {Router} = require("express")
 const router = Router()
 const { UserSchema, TokenSchema } = require("../db/schema")
-const { HashPassword , ValidateEmail, CheckIfUserLoggedIn , PreventLoggingInAgain } = require("../helpers/authHelper")
+const { HashPassword , ValidateEmail, CheckIfUserLoggedIn , PreventLoggingInAgain , checkFieldsLength } = require("../helpers/authHelper")
 const passport = require("passport")
 const sanitizeHtml = require("sanitize-html")
 const { sendEmail } = require("../helpers/emailSender")
@@ -22,6 +22,17 @@ router.route("/register")
     name = sanitizeHtml(name)
     username = sanitizeHtml(username)
     email = sanitizeHtml(email)
+
+    // check length of fields
+    if (name.length > 128) {
+        req.flash("error" , "name field must be maximum 128 characters")
+        return res.redirect("/auth/register")
+    }
+
+    if (username.length > 32) {
+        req.flash("error" , "username field must be maximum 32 characters")
+        return res.redirect("/auth/register")
+    }
 
     const usernameReg = /^[a-z0-9_\.]+$/
 
@@ -166,7 +177,6 @@ router.route("/reset-password/:userId/:token" , CheckIfUserLoggedIn)
 .post(async(req , res) => {
     const { userId , token } = req.params
 
-    req.body.newPassword = sanitizeHtml(req.body.newPassword)
 
     if (!req.body.newPassword) {
         req.flash("error" , "new password is required")
