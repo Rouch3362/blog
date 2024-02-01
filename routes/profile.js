@@ -106,12 +106,12 @@ router.route("/profile" , CheckIfUserLoggedIn)
 
 
     if (req.file) {
-        profile = "../" + req.file.path
+        profile = "../" + req.file.path.replace("public" , "")
     }
     const user = await UserSchema.findByIdAndUpdate(req.user.id , {name , username , email , profile_picture: profile})
     // delete previous profile picture
     if (req.file && user.profile_picture !== "../uploads/noprofile.png" && !user.profile_picture.includes("https")) {
-        fs.unlinkSync(user.profile_picture.replace("../" , ""))
+        fs.unlinkSync("public/"+user.profile_picture.replace("../" , ""))
     }
     if (!user) {
         req.flash("error" , "something went wrong try again")
@@ -134,7 +134,7 @@ router.post("/writers/:id/delete" , CheckIfUserLoggedIn , async (req , res) => {
     const user = await UserSchema.findOneAndDelete({_id: userId})
 
     if (user.profile_picture !== "../uploads/noprofile.png" && !user.profile_picture.includes("https")) {
-        fs.rmSync(`uploads/${user.id}` , { recursive: true, force: true })
+        fs.rmSync(`public/uploads/${user.id}` , { recursive: true, force: true })
     } 
 
     if (!user) {
