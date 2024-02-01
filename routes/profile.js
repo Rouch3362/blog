@@ -1,7 +1,7 @@
 const {Router} = require("express")
 const { UserSchema, BlogSchema, FollowSchema } = require("../db/schema")
 const { isValidObjectId } = require("mongoose")
-const { CheckIfUserLoggedIn, ValidateEmail } = require("../helpers/authHelper")
+const { CheckIfUserLoggedIn, ValidateEmail, checkFieldsLength } = require("../helpers/authHelper")
 const sanitize = require("sanitize-html")
 const router = Router()
 const fs = require('fs')
@@ -81,6 +81,7 @@ router.post("/follow/:id" , CheckIfUserLoggedIn , async (req , res) => {
 })
 
 
+
 router.route("/profile" , CheckIfUserLoggedIn)
 .get( async (req , res) => {
     const { id } = req.user
@@ -93,11 +94,53 @@ router.route("/profile" , CheckIfUserLoggedIn)
     })
 })
 .post(upload.single("profile") ,async (req , res) => {
-    let { username , name , email , profile } = req.body
+    let { username , name , email , profile , about} = req.body
     username = sanitize(username)
     email = sanitize(email)
     name = sanitize(name)
+    about = sanitize(about)
 
+    if (!username || !name || !email) {
+        req.flash("error" , "username, name, email field are required")
+        return res.redirect("/profile")
+    }
+
+    // checks length of fields
+    if (about.length > 255) {
+        req.flash("error" , "about field must be maximum 255 characters")
+        return res.redirect("/profile")
+    }
+
+    if (name.length > 128) {
+        req.flash("error" , "name field must be maximum 128 characters")
+        return res.redirect("/profile")
+    }
+
+    if (username.length > 32) {
+        req.flash("error" , "username field must be maximum 32 characters")
+        return res.redirect("/profile")
+    }
+
+    const usernameReg = /^[a-z0-9_\.]+$/
+
+    if (!username.match(usernameReg)) {
+        req.flash("error" , "invalid username")
+        return res.redirect("/auth/register")
+    }
+
+    const userExist = await UserSchema.findOne({$and: [{username: username} , {_id: {$ne: req.user.id}}]})
+    const userExistByEmail = await UserSchema.findOne({$and: [{email: email} , {_id: {$ne: req.user.id}}]})
+    
+
+    if (userExist) {
+        req.flash("error" , "username most be unique")
+        return res.redirect("/profile")
+    }
+
+    if (userExistByEmail) {
+        req.flash("error" , "email address is for another user")
+        return res.redirect("/profile")
+    }
 
     if (!ValidateEmail(email)) {
         req.flash("error" , "email address is invalid please enter a valid one")
@@ -108,7 +151,7 @@ router.route("/profile" , CheckIfUserLoggedIn)
     if (req.file) {
         profile = "../" + req.file.path.replace("public" , "")
     }
-    const user = await UserSchema.findByIdAndUpdate(req.user.id , {name , username , email , profile_picture: profile})
+    const user = await UserSchema.findByIdAndUpdate(req.user.id , {name , username , email , profile_picture: profile , about} , {runValidators: true})
     // delete previous profile picture
     if (req.file && user.profile_picture !== "../uploads/noprofile.png" && !user.profile_picture.includes("https")) {
         fs.unlinkSync("public/"+user.profile_picture.replace("../" , ""))
