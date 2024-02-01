@@ -136,7 +136,7 @@ router.route("/reset-password" , CheckIfUserLoggedIn)
     const link = `${process.env.BASE_URL}/auth/reset-password/${token.user}/${token.token}`
 
     const emailMessage = sendEmail(email , "reset your password" , `<h1 style="text-align: center">Hello dear ${user.name}</h1> \ <p style="text-align:center;font-size:20px;"> this email message is request to reset the password of your account in blog website if you requested this action click on the link below <u>if you not just ignore it.</u></p> \ <div style="text-align:center;"><a href=${link} style="padding-left: 20px; padding-right:20px; padding-top: 10px; padding-bottom:10px; font-size: 20px;background-color: red; color: white; text-decoration: none; border-radius: 8px;">Reset My Password</a></div>`)
-    console.log(emailMessage)
+    
     if (!emailMessage) {
         req.flash("error" , "an error occured please try again")
         return res.redirect(req.headers.referer || "/reset-password")

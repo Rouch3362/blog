@@ -57,7 +57,7 @@ router.route("/post")
     }
 
     if (req.file) {
-        thumbnail = "../"+req.file.path
+        thumbnail = "../"+req.file.path.replace("public" , "")
     }
 
     // if body or title is empty user can not save the blog
@@ -159,7 +159,7 @@ router.post('/blogs/delete/:id' , CheckIfUserLoggedIn , async (req , res) => {
     }
 
     if (deletedBlog.thumbnail) {
-        fs.unlinkSync(deletedBlog.thumbnail.replace("../" , ""))
+        fs.unlinkSync("public/"+deletedBlog.thumbnail.replace("../" , ""))
     }
 
     req.flash("message" , `"${blog.title}" blog deleted successfully`)
