@@ -50,6 +50,12 @@ router.route("/post")
     title = sanitizeHtml(title)
     preview = sanitizeHtml(preview)
     tags = tags.split(",")
+
+    if (req.fileValidationError) {
+        req.flash("error" , req.fileValidationError)
+        return res.redirect("/post")
+    }
+
     if (req.file) {
         thumbnail = "../"+req.file.path
     }
