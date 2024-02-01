@@ -48,9 +48,8 @@ require("./helpers/twitterOAuth")
 
 // serving static files
 const path = require("path")
-app.use(express.static(path.join(__dirname , "public")))
-app.use('/uploads', express.static('uploads'));
-
+app.use(express.static(path.join(__dirname, 'public')))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 // add database functionalities to app
 require("./db")
 
