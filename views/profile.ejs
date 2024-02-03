@@ -2,7 +2,7 @@
 <form action="/writers/<%= user.id %>/delete" method="post" class="absolute right-2">
     <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-xl m-4">Delete Account</button>
 </form>
-<form enctype="multipart/form-data" action="/profile" method="post" class="flex flex-col justify-center items-center gap-10 mt-14" >
+<form enctype="multipart/form-data" action="/profile" method="post" class="flex py-10 flex-col justify-center items-center gap-10 mt-14" >
     <h1 class="text-xl font-semibold">Edit Your Information</h1>
     <div>
         <label for="profile" class="flex flex-row gap-5 justify-center items-center">
@@ -27,7 +27,10 @@
             <textarea name="about" cols="25" rows="5" maxlength="255" placeholder="Write Something About Yourself...(max 255 letters)" class="resize-none bg-transparent rounded-lg px-4 py-2" type="text"><%= user.about%></textarea>
             <img onclick="editButtonClicked(this)" id="editButton" class="w-5" width="96" height="96" src="https://img.icons8.com/fluency-systems-regular/96/25EB65/pen-squared.png" alt="pen-squared"/>
         </div>
-        <button class="px-4 py-2 rounded-lg bg-green-500 text-white">Submit</button>
+        <div>
+            <a class="px-4 py-2 rounded-lg bg-blue-500 text-white" href="/profile/change-password">Change Password</a>
+            <button class="px-4 py-2 rounded-lg bg-green-500 text-white">Submit</button>
+        </div>
     </div>
 </form>
 
