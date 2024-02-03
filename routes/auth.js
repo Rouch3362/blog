@@ -87,14 +87,12 @@ router.route("/login")
 })
 .post(passport.authenticate("local" , {failureFlash: true , failureRedirect: "/auth/login"}) , (req , res) => {
     req.flash("message" , `welcome back ${req.user.name}`)
-    res.redirect(req.headers.referer || "/")
+    res.redirect("/")
 })
 
 
 router.get("/twitter" , passport.authenticate("twitter"))
-router.get("/twitter/callback" , passport.authenticate("twitter" , {failureRedirect: "/"}) , (req , res) => {
-    res.redirect(req.headers.referer || "/")
-})
+router.get("/twitter/callback" , passport.authenticate("twitter" , {failureRedirect: "/login" , successRedirect: "/"}))
 
 
 router.post("/logout" , (req , res) => {
