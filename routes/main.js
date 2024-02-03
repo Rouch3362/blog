@@ -17,7 +17,12 @@ router.get("/" , async (req , res) => {
     const blogsPerPage = 10
 
     // only collect the desired data on a single page not all documents for one page it speeds up the app.
-    const blogs = await BlogSchema.find({}).sort({createdAt: -1}).populate("author").skip(page*blogsPerPage - 10).limit(blogsPerPage)
+    let blogs = await BlogSchema.find(
+        {})
+        .sort({createdAt: -1}).
+        populate("author").
+        skip(page*blogsPerPage - 10)
+        .limit(blogsPerPage)
 
     if (page > pageCount) {
         page = pageCount
