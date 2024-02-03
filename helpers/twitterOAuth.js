@@ -6,7 +6,7 @@ const { TwitterUser } = require('../db/schema');
 passport.use(new Strategy({
     consumerKey: process.env.TWITTER_API_KEY,
     consumerSecret: process.env.TWITTER_API_SECRET,
-    callbackURL: 'http://localhost:3000/auth/twitter/callback'
+    callbackURL: 'http://127.0.0.1:3000/auth/twitter/callback'
   },
   async function (token, tokenSecret, profile, done) {
     let user = await TwitterUser.findOne({twitterId: profile.id})
