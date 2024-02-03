@@ -1,7 +1,7 @@
 const {Router} = require("express")
 const { UserSchema, BlogSchema, FollowSchema } = require("../db/schema")
 const { isValidObjectId } = require("mongoose")
-const { CheckIfUserLoggedIn, ValidateEmail, checkFieldsLength } = require("../helpers/authHelper")
+const { CheckIfUserLoggedIn, ValidateEmail, checkFieldsLength, ValidatePassword, HashPassword } = require("../helpers/authHelper")
 const sanitize = require("sanitize-html")
 const router = Router()
 const fs = require('fs')
@@ -164,6 +164,40 @@ router.route("/profile" , CheckIfUserLoggedIn)
     res.redirect('/profile')
 })
 
+
+router.route("/profile/change-password" , CheckIfUserLoggedIn)
+.get((req , res) => {
+    res.render("changePassword.ejs" , {
+        isAuthenticated: req.isAuthenticated(),
+        error: req.flash("error"),
+        message: req.flash("message")
+    })
+})
+.post(async (req , res) => {
+    const { oldPassword , newPassword } = req.body
+
+    if (!oldPassword || !newPassword) {
+        req.flash("error" , "all fields are required")
+        return res.redirect("/profile/change-password")
+    }
+
+    const { password } = await UserSchema.findById(req.user.id).select("+password")
+    console.log(oldPassword , password , newPassword)
+
+    if (!ValidatePassword(oldPassword , password)){
+        req.flash("error" , "the old password does not match to your password")
+        return res.redirect("/profile/change-password")
+    }
+
+    if (oldPassword === newPassword) {
+        req.flash("error" , "new password and old password are same")
+        return res.redirect("/profile/change-password")
+    }
+
+    await UserSchema.updateOne({_id: req.user.id} , {password: HashPassword(newPassword)})
+    req.flash("message" , "your password changed successfully")
+    res.redirect("/profile")
+})
 
 router.post("/writers/:id/delete" , CheckIfUserLoggedIn , async (req , res) => {
     const { id: userId } = req.params
